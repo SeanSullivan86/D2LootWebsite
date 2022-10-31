@@ -9,13 +9,10 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     D2Item: typeof import('./src/components/D2Item.vue')['default']
     D2ItemRow: typeof import('./src/components/D2ItemRow.vue')['default']
-    D2MainPanel: typeof import('C:/Users/sully/Downloads/D2LootWebsite/src/components/D2MainPanel.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElMain: typeof import('element-plus/es')['ElMain']
-    ElTree: typeof import('element-plus/es')['ElTree']
     MenuNode: typeof import('./src/components/MenuNode.vue')['default']
     TopNItemsPanel: typeof import('./src/components/TopNItemsPanel.vue')['default']
   }
