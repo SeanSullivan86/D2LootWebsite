@@ -1,0 +1,68 @@
+{
+  "dropIteration": 83,
+  "quality": "RARE",
+  "name": "Giant Sword,Storm Thirst",
+  "description": "+3 to Mana after each Kill,Prevent Monster Heal,+50 poison damage over 5 seconds,+123 to Attack Rating against Undead,+106% Damage to Undead,+98 to Attack Rating,",
+  "ethereal": false,
+  "sockets": 0,
+  "gold": 0,
+  "defense": 0,
+  "id": 23,
+  "skillBonuses": {
+    "individualSkillBonuses": [],
+    "skillTabBonuses": [],
+    "classSkillBonuses": []
+  },
+  "stats": {
+    "stats": [
+      {
+        "statId": 19,
+        "statParam": 0,
+        "statValue": 98
+      },
+      {
+        "statId": 57,
+        "statParam": 0,
+        "statValue": 103
+      },
+      {
+        "statId": 58,
+        "statParam": 0,
+        "statValue": 103
+      },
+      {
+        "statId": 59,
+        "statParam": 0,
+        "statValue": 125
+      },
+      {
+        "statId": 117,
+        "statParam": 0,
+        "statValue": 1
+      },
+      {
+        "statId": 122,
+        "statParam": 0,
+        "statValue": 106
+      },
+      {
+        "statId": 124,
+        "statParam": 0,
+        "statValue": 123
+      },
+      {
+        "statId": 138,
+        "statParam": 0,
+        "statValue": 3
+      },
+      {
+        "statId": 326,
+        "statParam": 0,
+        "statValue": 1
+      }
+    ]
+  },
+  "itemTypeName": "Giant Sword",
+  "itemTypeCode": "gis",
+  "illegalStaffmods": []
+}
