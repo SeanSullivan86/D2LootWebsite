@@ -7,6 +7,7 @@ const path = require('path')
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/D2LootWebsite/',
   plugins: [
     vue(),
     Components({
