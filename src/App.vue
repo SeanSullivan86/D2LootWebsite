@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue'
 import MenuNode from './components/MenuNode.vue'
 import TopNItemsPanel from './components/TopNItemsPanel.vue'
 import { handleWebsocketMessage, makeTopNItemsRequest, createStateForUseCase, menu, MenuTree, selectedPath, selectedCategory, 
-  makeUseCaseAndCategoryNamesRequest, websocket, WebSocketWrapper } from './item-state'
+  makeUseCaseAndCategoryNamesRequest, websocket, WebSocketWrapper, sendAllQueuedUpWebsocketRequests } from './item-state'
+import BasicStats from './components/BasicStats.vue'
 
 
 
@@ -20,7 +21,9 @@ let nextId = 0
 onMounted(() => {
   console.log("Start of onMounted hook in App.vue")
   
-  let connection = new WebSocket('ws://localhost:8025/ws/loot')
+  //let connection = new WebSocket('ws://localhost:8025/ws/loot')
+  let connection = new WebSocket('ws://76.146.194.243:8025/ws/loot')
+
   connection.onmessage = (event) => {
     console.log(event.data);
     handleWebsocketMessage(event.data);
@@ -29,7 +32,8 @@ onMounted(() => {
     console.log('Websocket connection opened')
     console.log(event)
     websocket.connection = connection
-    makeUseCaseAndCategoryNamesRequest(connection!)
+    sendAllQueuedUpWebsocketRequests();
+    //makeUseCaseAndCategoryNamesRequest(connection!)
   }
 
   connection.onerror = (event) => {
@@ -65,6 +69,19 @@ onMounted(() => {
 </script>
 
 <template>
+
+    <BasicStats />
+  
+    <UseCase useCase="Rare Weapons|1 or 2 handed : Highest DPS" />
+
+    <UseCase useCase="Tri-Res Boots" />
+
+    <ItemGrid gridName="Item Counts by Item Type and Quality" />
+
+    <ItemGrid gridName="Counts of Set and Unique Items by Name" />
+
+
+  <!--
   <div class="common-layout">
     <el-container>
       <el-header>Header</el-header>
@@ -82,7 +99,7 @@ onMounted(() => {
         </el-main>
       </el-container>
     </el-container>
-  </div> 
+  </div> -->
 </template>
  
 <style>
@@ -91,7 +108,7 @@ onMounted(() => {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: white;
+  margin-top: 10px;
 }
 </style>

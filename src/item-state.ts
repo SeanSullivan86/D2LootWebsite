@@ -1,11 +1,21 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
+import { D2Item , D2TopNItem} from './model/D2Item';
 
 export interface WebSocketWrapper {
     connection : WebSocket | null
 }
 
 export const websocket : WebSocketWrapper = {connection: null}
+export const websocketRequestQueue : Map<string,any> = new Map();
+
+export function sendAllQueuedUpWebsocketRequests() {
+    websocketRequestQueue.forEach((request, requestId) => {
+        console.log("Sending queued websocket request : " + requestId);
+        websocket.connection!.send(JSON.stringify(request));
+    });
+    websocketRequestQueue.clear();
+}
 
 export interface MenuTree {
     nodeName: string
@@ -60,28 +70,7 @@ export function updateSelectedCategory(newCategory: string) {
 }
 
 
-export interface D2ItemData {
-    defense: number,
-    description: string,
-    dropIteration: number,
-    ethereal : boolean,
-    gold: number,
-    id: number,
-    illegalStaffmods? : any,
-    itemTypeCode: string,
-    itemTypeName: string,
-    name: string,
-    quality: string,
-    skillBonuses? : any,
-    sockets: number,
-    stats? : any
-}
 
-export interface D2TopNItem {
-    item: D2ItemData,
-    score: number,
-    sequenceNumber: number
-}
 
 // useCase -> category -> ItemCategoryState
 export const topNItemsByUseCase: Ref<Map<string, Map<string, ItemCategoryState>>> = ref(new Map<string, Map<string, ItemCategoryState>>());
@@ -126,14 +115,7 @@ export interface TopNItemsResponse {
     n: number
 }
 
-export function handleWebsocketMessage(message: string) {
-    let messageObject = JSON.parse(message);
-    if (messageObject._type == "TopNItemsResponse") {
-        handleTopNItemsResponse(messageObject);
-    } else if (messageObject._type == "UseCaseAndCategoryNamesResponse") {
-        handleUseCaseAndCategoryNamesResponse(messageObject);
-    }
-}
+
 
 export function makeTopNItemsRequest(connection: WebSocket, useCase: string, category: string) {
     let state = topNItemsByUseCase.value;
@@ -219,4 +201,60 @@ function handleUseCaseAndCategoryNamesResponse(untypedResponse: any) {
     }
 
     categoriesByUseCase.value = response.categoryNamesByUseCase;
+}
+
+
+export function uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+      (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+    );
+}
+
+export const pendingRequests = ref<Map<string, PromiseWithResolvers<any>>>(new Map())
+
+export function makeWebsocketRequestExpectingResponse(request: any):Promise<any> {
+    const requestId = request.requestId
+    let promiseWithResolvers = Promise.withResolvers<any>();
+    pendingRequests.value.set(requestId, promiseWithResolvers);
+
+    if (websocket.connection != null ) {
+        websocket.connection.send(JSON.stringify(request));
+    } else {
+        console.log("Enqueuing request since websocket isn't available right now : " + requestId);
+        websocketRequestQueue.set(requestId, request);
+    }
+    
+
+    setTimeout(() => {
+        let promiseWithResolvers = pendingRequests.value.get(requestId)
+        if (promiseWithResolvers) {
+            promiseWithResolvers.reject("Error: No response within 4 seconds")
+            pendingRequests.value.delete(requestId);
+            websocketRequestQueue.delete(requestId);
+        }
+    }, 4000);
+
+    return promiseWithResolvers.promise;
+}
+
+export function handleWebsocketMessage(message: string) {
+    console.log("Start of handleWebsocketMessage : " + message);
+    let messageObject = JSON.parse(message);
+
+    if (messageObject.requestId) {
+        let promiseWithResolvers = pendingRequests.value.get(messageObject.requestId)
+        if (promiseWithResolvers) {
+            promiseWithResolvers.resolve(messageObject)
+            pendingRequests.value.delete(messageObject.requestId);
+        } else {
+            console.warn("No pending request for requestId: " + messageObject.requestId)
+        }
+    }
+
+    /*
+    if (messageObject._type == "TopNItemsResponse") {
+        handleTopNItemsResponse(messageObject);
+    } else if (messageObject._type == "UseCaseAndCategoryNamesResponse") {
+        handleUseCaseAndCategoryNamesResponse(messageObject);
+    } */
 }

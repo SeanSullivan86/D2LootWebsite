@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
-import { D2ItemData, D2TopNItem } from '../item-state'
-
+import { D2Item, D2TopNItem } from '../model/D2Item'
 const props = defineProps<{
   item: any
 }>()

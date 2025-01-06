@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onRenderTriggered } from 'vue'
-import { D2ItemData, D2TopNItem, ItemCategoryState, topNItemsByUseCase, categoriesByUseCase, updateSelectedCategory, selectedPath, selectedCategory } from '../item-state'
+import { ItemCategoryState, topNItemsByUseCase, categoriesByUseCase, updateSelectedCategory, selectedPath, selectedCategory } from '../item-state'
+import { D2TopNItem } from '../model/D2Item'
 
 
 const items = computed<D2TopNItem[]>(() => {

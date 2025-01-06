@@ -1,22 +1,26 @@
 <script setup lang="ts">
 
 import { ref, computed } from 'vue'
+import { D2Item } from '../model/D2Item';
 
 const props = defineProps<{
-  item: any
+  item: D2Item
 }>()
 
 const fixedDescription = computed(() => {
-  return props.item.name.toUpperCase().split(',').reverse();
+  return props.item.description.toUpperCase().split(',').reverse();
 })
 
 const fixedName = computed(() => {
-  return props.item.description.toUpperCase().split(',').reverse();
+  return props.item.name.toUpperCase().split(',').reverse();
 })
 
 const nameCssClass = computed(() => {
       if (props.item.quality == 'RARE') return 'yellow';
-      return 'black';
+      if (props.item.quality == 'SET') return 'set-green';
+      if (props.item.quality == 'MAGIC') return 'blue';
+      if (props.item.quality == 'UNIQUE') return 'gold';
+      return 'white';
 })
 
 </script>
