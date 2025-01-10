@@ -76,6 +76,16 @@ onMounted(() => {
 
     <UseCase useCase="Tri-Res Boots" />
 
+    <UseCase useCase="Three Socket Magic Circlets" />
+
+    <UseCase useCase="Illegal Barb Staffmods" />
+
+    <UseCase useCase="Rare Melee Jewels" />
+
+    <UseCase useCase="Wind Druid Pelts" />
+
+    <UseCase useCase="Magic Skill/IAS Javelins" />
+
     <ItemGrid gridName="Item Counts by Item Type and Quality" />
 
     <ItemGrid gridName="Counts of Set and Unique Items by Name" />
