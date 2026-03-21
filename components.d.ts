@@ -7,12 +7,21 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AffixFrequencyBug: typeof import('./src/components/AffixFrequencyBug.vue')['default']
+    AssortedMagicItems: typeof import('./src/components/AssortedMagicItems.vue')['default']
     BasicStats: typeof import('./src/components/BasicStats.vue')['default']
+    CategorizedTopN: typeof import('./src/components/CategorizedTopN.vue')['default']
     D2Item: typeof import('./src/components/D2Item.vue')['default']
     D2ItemRow: typeof import('./src/components/D2ItemRow.vue')['default']
+    GoldBug: typeof import('./src/components/GoldBug.vue')['default']
+    IllegalStaffmodsBug: typeof import('./src/components/IllegalStaffmodsBug.vue')['default']
     ItemGrid: typeof import('./src/components/ItemGrid.vue')['default']
+    ItemTooltip: typeof import('./src/components/ItemTooltip.vue')['default']
     MenuNode: typeof import('./src/components/MenuNode.vue')['default']
-    TopNItemsPanel: typeof import('./src/components/TopNItemsPanel.vue')['default']
+    PerfectUniques: typeof import('./src/components/PerfectUniques.vue')['default']
+    StatsAcrossDropSources: typeof import('./src/components/StatsAcrossDropSources.vue')['default']
+    TogglingSectionHeader: typeof import('./src/components/TogglingSectionHeader.vue')['default']
+    TopN: typeof import('./src/components/TopN.vue')['default']
     UseCase: typeof import('./src/components/UseCase.vue')['default']
   }
 }

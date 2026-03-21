@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "element-plus": "*",
+    "ag-charts-vue3" : "13.1.0",
     "vue": "^3.2.41"
   }
 }

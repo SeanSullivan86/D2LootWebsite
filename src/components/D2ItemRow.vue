@@ -2,7 +2,11 @@
 
 import { ref, computed } from 'vue'
 import { D2Item, D2TopNItem } from '../model/D2Item'
+import { itemTypes, ItemType } from '../model/globals'
+import { createItemTooltip, moveItemTooltip, destroyItemTooltip } from '../app-state'
+
 const props = defineProps<{
+  consumerId: string,
   item: any
 }>()
 
@@ -16,20 +20,25 @@ const itemDescriptionElements = computed(() => {
 })
 
 const fixedName = computed(() => {
-    if (data.value.item.quality == "RARE") return data.value.item.itemTypeName.toUpperCase();
+    if (data.value.item.quality == "RARE") {
+      return itemTypes.get(data.value.item.itemTypeCode)!.name
+    } 
     return data.value.item.name.toUpperCase().split(",").reverse().join(" ");
   return 
 })
 
 const nameCssClass = computed(() => {
       if (data.value.item.quality == 'RARE') return 'yellow';
+      if (data.value.item.quality == 'MAGIC') return 'blue';
       return 'black';
 })
+
+
 
 </script>
 
 <template>
-  <tr>
+  <tr @mouseenter="createItemTooltip(data.item.id, props.consumerId, $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
     <td class="item-score-cell">{{ data.score }}</td>
     <td :class='[nameCssClass, "item-name-cell"]'>{{ fixedName }}</td>
     <td>
@@ -61,6 +70,14 @@ table.d2-item-table td.item-name-cell {
 table.d2-item-table td.yellow {
     color: #ffff00;
     font-weight: bold;
+}
+
+table.d2-item-table td.blue {
+    color: #4169e1;
+}
+
+table.d2-item-table tr {
+  cursor:pointer;
 }
 
 .item-description-element {

@@ -40,6 +40,7 @@ const nameCssClass = computed(() => {
 .itembox {
   background-color: #222;
   padding: 10px;
+  text-align: center;
 }
 
 

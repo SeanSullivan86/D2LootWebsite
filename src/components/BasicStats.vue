@@ -1,51 +1,39 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { websocket, makeWebsocketRequestExpectingResponse, uuidv4 } from '../item-state'
+import { ref, computed, onMounted, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
 import { ITEM_QUALITY_NAMES } from '../model/globals'
+import { itemCache, snapshotData } from '../app-state'
 
 const recentItemsByQuality = ref<D2Item[]|null>(null)
 const itemCountsByQuality = ref<number[]|null>(null)
 
-interface HomePageRequest {
-    _type : "HomePageRequest",
-    requestId : string
-}
-
-interface HomePageResponse {
-    _type : "HomePageResponse",
-    recentItemsByQuality : D2Item[],
-    itemCountsByQuality : number[]
-}
-
-//const items = computed<D2TopNItem[]>(() => {
-//  return []
-//})
+const props = defineProps<{
+  snapshotId: string,
+  dropContext: string,
+}>()
 
 onMounted(() => {
+  console.log("Start of onMounted hook in BasicStats")
+})
 
-  loadBasicStats();
-});
+watch(
+  () => props.snapshotId,
+  (newSnapshotId, oldSnapshotId) => {
 
-async function loadBasicStats() {
-  console.log("start of loadBasicStats");
-    const request:HomePageRequest = {
-      requestId : uuidv4(),
-      _type : "HomePageRequest",
-    }
-
-    let response = await makeWebsocketRequestExpectingResponse(request);
-    console.log("Response in loadBasicStats : " + response);
-    recentItemsByQuality.value = response.recentItemsByQuality;
-    itemCountsByQuality.value = response.itemCountsByQuality;
-}
+    recentItemsByQuality.value = snapshotData.dropContexts[props.dropContext].consumersById["BASIC_STATS"].mostRecentItemIdsByQuality.map((itemId: number) => {
+      if (itemId == null) return null
+      return itemCache.get(itemId);
+    })
+  itemCountsByQuality.value = snapshotData.dropContexts[props.dropContext].consumersById["BASIC_STATS"].countsByQuality;
+  }, { immediate: true }
+);
 
 </script>
 
 <template>
   
   <template v-if="itemCountsByQuality">
-
+    
     <table class="basicStatsTable">
       <thead>
         <tr>

@@ -1,116 +1,129 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { websocket, makeWebsocketRequestExpectingResponse, uuidv4 } from '../item-state'
-import { D2TopNItem, type D2Item } from '../model/D2Item'
-import { ITEM_QUALITY_NAMES } from '../model/globals'
-import { DATA_CACHE } from '../app-state'
-
-const itemGridState = ref<ItemGridState|undefined>(undefined)
+import { ref, computed, onRenderTriggered, watch } from 'vue'
+import { itemCache, snapshotData, arraySum } from '../app-state'
+import { D2TopNItem } from '../model/D2Item'
 
 const props = defineProps<{
-  gridName: string
+  snapshotId: string,
+  dropContext: string,
+  consumerId: string
 }>()
 
-interface ItemGridCounts {
-    rowNames : string[],
-    columnNames : string[],
-    counts : number[][],
-    rowTotals : number[],
-    columnTotals : number[]
+interface ItemGridRow {
+    rowName:string
+    counts:number[]
 }
 
+const rows = ref<ItemGridRow[]>([])
+const rowCount = ref<number>(0)
+const rowTotals = ref<number[]>([])
 
-interface ItemGridCountsRequest {
-    _type : "ItemGridCountsRequest",
-    requestId : string,
-    gridName : string
-}
+const columnNames = ref<string[]>([])    
+const columnCount = ref<number>(0)
+const sortColumn = ref<number>(-1)
+const columnTotals = ref<number[]>([])
 
-interface ItemGridCountsResponse {
-    _type : "ItemGridCountsResponse",
-    requestId : string,
-    counts: ItemGridCounts
-}
+// input
+// rowValues
+// columnValues
+// counts (matrix)
 
-interface ItemGridState {
-    counts?: ItemGridCounts,
-    pendingRequestId ?: string
-}
+watch(
+  [() => props.snapshotId, () => props.dropContext, () => props.consumerId],
+  ([newSnapshotId, newDropContext, newConsumerId], [oldSnapshotId, oldDropContext, oldConsumerId]) => {
+    const consumerSnapshot = snapshotData.dropContexts[props.dropContext].consumersById[props.consumerId]
+    console.log(props.consumerId)
+    console.log(newConsumerId)
+    console.log(consumerSnapshot)
 
-onMounted(() => {
+    rowCount.value = consumerSnapshot.rowValues.length;
+    columnCount.value = consumerSnapshot.columnValues.length;
+    columnNames.value = [...consumerSnapshot.columnValues]
 
-    itemGridState.value = {
-        counts: undefined,
-        pendingRequestId: undefined,
+    let newRows:ItemGridRow[] = []
+
+    for (const [index, rowName] of consumerSnapshot.rowValues.entries()) {
+      newRows.push({
+        rowName: rowName,
+        counts: [...consumerSnapshot.counts[index]]
+      })
     }
-
-    refreshData();
-});
-
-function getCacheKey(gridName:string) {
-  return `ItemGridCounts|${gridName}`;
-}
-
     
-async function refreshData() {
-  const request: ItemGridCountsRequest = {
-        _type: "ItemGridCountsRequest",
-        requestId: uuidv4(),
-        gridName: props.gridName
-    };
-    console.log(request);
 
-    itemGridState.value!.pendingRequestId = request.requestId;
+    newRows.sort((a,b) => {
+        if (sortColumn.value == -1) {
+            return arraySum(a.counts) - arraySum(b.counts);
+        }
+        return a.counts[sortColumn.value] - b.counts[sortColumn.value];
+    })
 
-    let response:ItemGridCountsResponse = await makeWebsocketRequestExpectingResponse(request);
-
-    if (itemGridState.value!.pendingRequestId === undefined) {
-        console.error("Got a ItemGridCountsResponse, but there's no pending request: " + response);
-        return;
-    }
-    if (itemGridState.value!.pendingRequestId != response.requestId) {
-      console.error("Got a ItemGridCountsResponse, but itemGridState has a different requestId")
-      return;
+    let newRowTotals:number[] = []
+    for (const [index, row] of newRows.entries()) {
+        newRowTotals.push(arraySum(row.counts))
     }
 
-    itemGridState.value = {
-        counts : response.counts,
-        pendingRequestId : undefined
+    let newColumnTotals:number[] = []
+    for (let col = 0; col < columnCount.value; col++) {
+        let sum = 0
+        for (let row = 0; row < rowCount.value; row++) {
+            sum += newRows[row].counts[col]
+        }
+        newColumnTotals.push(sum)
     }
 
-    DATA_CACHE.set(getCacheKey(props.gridName), itemGridState.value!);
+    rowTotals.value = newRowTotals
+    columnTotals.value = newColumnTotals
 
-}
+    rows.value = newRows;
+
+  }, { immediate: true }
+);
+
+
+
+const sectionTitle = computed(() => {
+  if (props.consumerId == "COUNTS_OF_SET_AND_UNIQUES_BY_NAME") {
+    return "Unique and Set Item Counts"
+  }
+  return props.consumerId
+})
+
+const explanation = computed(() => {
+  if (props.consumerId == "COUNTS_OF_SET_AND_UNIQUES_BY_NAME") {
+    return ""
+  }
+  return ""
+})
+
+  
 
 </script>
 
 <template>
-  <div style="border:1px solid #888; border-radius:5px; margin: 10px 0px; padding: 3px;">
-    <div style="color: white; margin:8px 0px;">{{ props.gridName }}</div>
-    <template v-if="itemGridState?.counts">
+    <template v-if="rows.length > 0">
         <table class="itemGrid">
             <thead>
                 <tr><th></th>
-                    <template v-for="columnName in itemGridState.counts.columnNames">
+                    <template v-for="columnName in columnNames">
                         <th>{{ columnName }}</th>
                     </template>
                     <th>Total</th>
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(rowName, rowIndex) in itemGridState.counts.rowNames">
-                    <tr><th>{{ rowName }}</th>
+                <template v-for="(row, rowIndex) in rows">
+                    <tr><th>{{ row.rowName }}</th>
                     
-                        <template v-for="(columnName, columnIndex) in itemGridState.counts.columnNames">
-                            <td>{{ itemGridState.counts.counts[rowIndex][columnIndex] }}</td>
+                        <template v-for="(count, columnIndex) in row.counts">
+                            <td>{{ count }}</td>
                         </template>
                     
-                        <td>{{ itemGridState.counts.rowTotals[rowIndex] }}</td>
+                        <td>{{ rowTotals[rowIndex] }}</td>
                     </tr>
                 </template>
                 <tr><th>Total</th>
-                    <template v-for="(columnName, columnIndex) in itemGridState.counts.columnNames">
-                        <td>{{ itemGridState.counts.columnTotals[columnIndex] }}</td>
+                    <template v-for="(columnName, columnIndex) in columnNames">
+                        <td>{{ columnTotals[columnIndex] }}</td>
                     </template>
                     <th></th>
                 </tr>
@@ -119,7 +132,6 @@ async function refreshData() {
     
 
     </template>
-  </div>
 </template>
 
 <style scoped>
