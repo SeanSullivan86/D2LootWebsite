@@ -41,7 +41,7 @@ const toggleButtonContent = computed(() => {
 }
 
 .sectionTitle {
-  display:inline-block;
+  display:inline;
   font-size: 1.8rem;
   font-weight: bold;
   color: darkred;

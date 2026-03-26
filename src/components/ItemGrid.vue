@@ -44,7 +44,7 @@ watch(
 
     for (const [index, rowName] of consumerSnapshot.rowValues.entries()) {
       newRows.push({
-        rowName: rowName,
+        rowName: rowHtml(rowName),
         counts: [...consumerSnapshot.counts[index]]
       })
     }
@@ -95,6 +95,12 @@ const explanation = computed(() => {
   return ""
 })
 
+function rowHtml(rowName:string):string {
+  if (rowName.endsWith(" Rune")) {
+    return "<span class='orange'>" + rowName + "</span>"
+  }
+  return rowName;
+}
   
 
 </script>
@@ -112,18 +118,18 @@ const explanation = computed(() => {
             </thead>
             <tbody>
                 <template v-for="(row, rowIndex) in rows">
-                    <tr><th>{{ row.rowName }}</th>
+                    <tr><th v-html="row.rowName"></th>
                     
                         <template v-for="(count, columnIndex) in row.counts">
-                            <td>{{ count }}</td>
+                            <td>{{ count.toLocaleString() }}</td>
                         </template>
                     
-                        <td>{{ rowTotals[rowIndex] }}</td>
+                        <td>{{ rowTotals[rowIndex].toLocaleString() }}</td>
                     </tr>
                 </template>
                 <tr><th>Total</th>
                     <template v-for="(columnName, columnIndex) in columnNames">
-                        <td>{{ columnTotals[columnIndex] }}</td>
+                        <td>{{ columnTotals[columnIndex].toLocaleString() }}</td>
                     </template>
                     <th></th>
                 </tr>
@@ -135,13 +141,23 @@ const explanation = computed(() => {
 </template>
 
 <style scoped>
+
+
+table.itemGrid thead th {
+  z-index: 2;
+  position: sticky;
+  top: -1px;
+  box-shadow: inset 0 -1px 0 #ccc; 
+}
+
 table.itemGrid {
   border-collapse: collapse;
+  /* border-spacing: 0; */
 }
 table.itemGrid td {
   background-color: #222;
   color: white;
-  text-align: left;
+  text-align: right;
   border: 1px solid #888;
   padding: 2px;
 }

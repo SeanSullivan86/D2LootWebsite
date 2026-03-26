@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onRenderTriggered, watch } from 'vue'
-import { itemCache, snapshotData } from '../app-state'
+import { itemCache, snapshotData, isNarrowWindow } from '../app-state'
 import { D2TopNItem } from '../model/D2Item'
+import { friendlyItemTypeTypeName } from '../model/globals'
 
 const props = defineProps<{
   snapshotId: string,
@@ -16,7 +17,11 @@ const itemsByCategory = ref<Map<string,D2TopNItem[]>>(new Map())
 const categories = ref<string[]>([])
 
 const isRareWeapons = computed(() => {
-  return (props.consumerId.startsWith("RARE_WEAPONS|"))
+  return props.consumerId.startsWith("RARE_WEAPONS|")
+});
+
+const isRareOrFoolsWeapons = computed(() => {
+  return props.consumerId.startsWith("RARE_WEAPONS|") || props.consumerId.startsWith("FOOLS_WEAPON|")
 });
 
 const explanation = computed(() => {
@@ -77,19 +82,21 @@ function updateSelectedCategory(newCategory:string) {
       <template v-for="category in categories">
         <span class="category-link" 
           :class="{ active: category == selectedCategory }"
-          @click="updateSelectedCategory(category)">{{ category }}</span>
+          @click="updateSelectedCategory(category)">{{ isRareOrFoolsWeapons ? friendlyItemTypeTypeName(category) : category }}</span>
       </template>
     
     </div>
 
     <table class="d2-item-table">
-      <thead> 
-      <tr>
-        <th>Score</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-      </thead>
+      <template v-if="!isNarrowWindow">
+        <thead> 
+        <tr>
+          <th>Score</th>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+        </thead>
+      </template>
       <tbody>
       <template v-for="item in itemsByCategory.get(selectedCategory!)" :key="item.item.id">
         <D2ItemRow :item="item" :consumer-id="props.consumerId" />

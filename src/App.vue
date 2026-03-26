@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import BasicStats from './components/BasicStats.vue'
-import { itemCache, setSnapshotData } from './app-state'
+import { isNarrowWindow, itemCache, setSnapshotData } from './app-state'
 import CategorizedTopN from './components/CategorizedTopN.vue'
 import ItemGrid from './components/ItemGrid.vue'
 import PerfectUniques from './components/PerfectUniques.vue'
@@ -14,7 +13,6 @@ import GoldBug from './components/GoldBug.vue'
 import IllegalStaffmodsBug from './components/IllegalStaffmodsBug.vue'
 
 const isLoaded = ref<number>(0)
-// const selectedDropContext = ref<string|null>("L85_NORMAL_MOB")
 const selectedDropContext = ref<string>("ALL")
 const snapshotId = ref<string|null>(null)
 
@@ -24,7 +22,7 @@ onMounted(() => {
 })
 
 async function loadData() {
-  const response = await fetch("https://pub-94fd7d16758c49eba2a7a4a7052b96d5.r2.dev/ITEM_SNAPSHOT.gz");
+  const response = await fetch("https://pub-94fd7d16758c49eba2a7a4a7052b96d5.r2.dev/ITEM_SNAPSHOT.json.gz");
 
   if (!response.ok) {
     throw new Error("Failed to get item data snapshot");
@@ -72,18 +70,18 @@ const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + 
   </div>
   
 
-  <div class="select-drop-context" style="margin-left:8px;">
-    <input type="radio" id="DC_ALL" value="ALL" v-model="selectedDropContext">
-    <label for="DC_ALL">All 3 Combined</label>
+  <div :class="['select-drop-context', isNarrowWindow ? 'narrow' : '']" style="margin-left:8px;">
+    <input type="radio" id="DC_L85_NORMAL_MOB" value="L85_NORMAL_MOB" v-model="selectedDropContext">
+    <label for="DC_L85_NORMAL_MOB">Normal Mob (Level 85 Area)</label>
 
     <input type="radio" id="DC_L85_UNIQUE_MOB" value="L85_UNIQUE_MOB" v-model="selectedDropContext">
     <label for="DC_L85_UNIQUE_MOB">Unique Mob (Level 85 Area)</label>
  
-    <input type="radio" id="DC_L85_NORMAL_MOB" value="L85_NORMAL_MOB" v-model="selectedDropContext">
-    <label for="DC_L85_NORMAL_MOB">Normal Mob (Level 85 Area)</label>
- 
     <input type="radio" id="DC_HELL_BAAL" value="HELL_BAAL" v-model="selectedDropContext">
     <label for="DC_HELL_BAAL">Hell Baal</label>
+
+    <input type="radio" id="DC_ALL" value="ALL" v-model="selectedDropContext">
+    <label for="DC_ALL">All 3 Combined</label>
   </div>
 
   <TogglingSectionHeader title="Cold Sorc Orbs">
@@ -230,18 +228,18 @@ const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + 
 
     <div class="faq-question">What else did you have to change in the game to make this work?</div>
     <div class="faq-answer">
-      <ul>
-        <li>Disabled the check that prevents the same Unique item from spawning more than once in the same game.</li>
-        <li>Disabled the code where it needs to find an empty spot on the ground to put the item.</li>
-        <li>Deleted each item after it gets created so memory doesn't fill up</li>
-        <li>Each item in a game is given a sequential id number when it is loaded into the game. Since there's a 32bit
-          integer keeping track of the next id number to assign, it eventually overflows after 4+ billion items and wraps
-          back to 0, and then the item ids being assigned collide with other item ids in the game (like the items my
-          character is wearing, for example) and the game crashes. I just made it so when this counter got close to
-          overflowing, I reset it back to 1 billion. I don't need the items to have actual unique ids, since I'm
-          deleting them right after they get created anyway.
-        </li>
-      </ul>
+      Disabled the check that prevents the same Unique item from spawning more than once in the same game.
+      <br /><br />
+      Disabled the code where it needs to find an empty spot on the ground to put the item.
+      <br /><br />
+      Deleted each item after it gets created so memory doesn't fill up.
+      <br /><br />
+      Each item in a game is given a sequential id number when it is loaded into the game. Since there's a 32bit
+      integer keeping track of the next id number to assign, it eventually overflows after 4+ billion items and wraps
+      back to 0, and then the item ids being assigned collide with other item ids in the game (like the items my
+      character is wearing, for example) and the game crashes. I just made it so when this counter got close to
+      overflowing, I reset it back to 1 billion. I don't need the items to have actual unique ids, since I'm
+      deleting them right after they get created anyway.
     </div>
 
 </TogglingSectionHeader>
@@ -312,6 +310,11 @@ input[type="radio"]:checked + label {
   border-right: 2px solid #555555;
   user-select: none;
   transition: background 0.15s, color 0.15s;
+}
+
+.select-drop-context.narrow label {
+  width: 95%;
+  border-bottom: 1px solid #aaa;
 }
 
 .select-drop-context label:last-of-type {

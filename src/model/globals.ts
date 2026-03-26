@@ -1,6 +1,38 @@
 
 export const ITEM_QUALITY_NAMES = ["", "Low Quality", "Normal", "Superior", "Magic", "Set", "Rare", "Unique", "Crafted"];
 
+export const DROP_CONTEXT_FRIENDLY_NAMES = new Map();
+DROP_CONTEXT_FRIENDLY_NAMES.set("L85_UNIQUE_MOB", "Unique Mob (Level 85 Area)");
+DROP_CONTEXT_FRIENDLY_NAMES.set("L85_NORMAL_MOB", "Normal Mob (Level 85 Area)");
+DROP_CONTEXT_FRIENDLY_NAMES.set("HELL_BAAL", "Hell Baal");
+DROP_CONTEXT_FRIENDLY_NAMES.set("ALL","All 3 Combined");
+
+const itemTypeTypeFriendlyNames:Record<string,string> = {
+    "swor" : "Sword",
+    "hamm" : "Hammer",
+    "spea" : "Spear",
+    "pole" : "Polearm",
+    "axe" : "Axe",
+    "abow" : "Amazon Bow",
+    "aspe" : "Amazon Spear",
+    "ajav" : "Amazon Javelin",
+    "jave" : "Javelin",
+    "bow" : "Bow",
+    "xbow" : "Crossbow",
+    "h2h2" : "Claws2",
+    "h2h" : "Claws",
+    "tkni" : "Throwing Knife",
+    "mace" : "Mace",
+    "taxe" : "Throwing Axe",
+    "scep" : "Scepter",
+    "knif" : "Knife",
+    "club" : "Club"
+}
+
+export function friendlyItemTypeTypeName(code: string):string {
+    return itemTypeTypeFriendlyNames[code] ?? code;
+}
+
 const itemTypeTsv = `6l7	Crusader Bow	bow	15	63			lbb	8l8	6l7
 xlt	Templar Coat	tors					plt	xlt	ult
 sbr	Sabre	swor	3	8			sbr	9sb	7sb

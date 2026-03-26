@@ -3,7 +3,7 @@
 import { ref, computed } from 'vue'
 import { D2Item, D2TopNItem } from '../model/D2Item'
 import { itemTypes, ItemType } from '../model/globals'
-import { createItemTooltip, moveItemTooltip, destroyItemTooltip } from '../app-state'
+import { createItemTooltip, moveItemTooltip, destroyItemTooltip, isNarrowWindow, isTouchOnly } from '../app-state'
 
 const props = defineProps<{
   consumerId: string,
@@ -39,9 +39,14 @@ const nameCssClass = computed(() => {
 
 <template>
   <tr @mouseenter="createItemTooltip(data.item.id, props.consumerId, $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
-    <td class="item-score-cell">{{ data.score }}</td>
-    <td :class='[nameCssClass, "item-name-cell"]'>{{ fixedName }}</td>
+    <template v-if="!isNarrowWindow">
+      <td class="item-score-cell">{{ data.score }}</td>
+      <td :class='[nameCssClass, "item-name-cell"]'>{{ fixedName }}</td>
+    </template>
     <td>
+        <template v-if="isNarrowWindow">
+          {{ data.score }} | <span :class="nameCssClass">{{ fixedName }}</span> | 
+        </template>
         <template v-if="data.item.ethereal">
           <span class="ethereal-tag">ETHEREAL</span>
         </template>

@@ -1,6 +1,14 @@
 import { ref } from 'vue';
 import { D2Item } from './model/D2Item';
 
+
+export const isNarrowWindow = ref(window.innerWidth < 768)
+window.addEventListener('resize', () => {
+  isNarrowWindow.value = window.innerWidth < 768
+})
+export const isTouchOnly = ref(window.matchMedia("(any-hover: none)").matches);
+
+
 export const DATA_CACHE:Map<string,any> = new Map();
 
 export const itemCache:Map<number,D2Item> = new Map()
@@ -15,8 +23,9 @@ export const dataSummary = ref<string|null>(null)
 
 export const consumerData:Map<string,any> = new Map()
 
-
 export const LATEST_SNAPSHOT_ID = ref<string|null>(null)
+
+
 
 export function createItemTooltip(itemId:number, consumerId:string, event:any) {
   if (itemId == null || itemId == undefined) return;

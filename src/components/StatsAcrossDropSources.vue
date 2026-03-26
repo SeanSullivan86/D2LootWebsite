@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
-import { ITEM_QUALITY_NAMES } from '../model/globals'
+import { ITEM_QUALITY_NAMES, DROP_CONTEXT_FRIENDLY_NAMES } from '../model/globals'
 import { itemCache, snapshotData, arraySum } from '../app-state'
 
 interface StatsForDropContext {
@@ -61,7 +61,12 @@ watch(
         <tr>
           <th></th>
           <template v-for="dropContextName in dropContextNames">
-            <th>{{ dropContextName }}</th>
+            <template v-if="dropContextName == 'ALL'">
+              <th>Total</th>
+            </template>
+            <template v-else>
+              <th>{{ DROP_CONTEXT_FRIENDLY_NAMES.get(dropContextName) }}</th>
+            </template>
           </template>
         </tr>
       </thead>

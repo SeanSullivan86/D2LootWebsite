@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
 import { ITEM_QUALITY_NAMES, itemTypes, ItemType } from '../model/globals'
-import { itemCache, snapshotData, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip } from '../app-state'
+import { itemCache, snapshotData, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly } from '../app-state'
 
 const itemName = ref<string[]|null>(null)
 const itemDescription = ref<string[]|null>(null)
@@ -24,23 +24,30 @@ function dmgString(dmgObject:any):string {
      "</span> to <span class='blue'>" + dmgObject.max + "</span>"
 }
 
-watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([newItemId, newX, newY, newConsumerId]) => {
+watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId, oldX, oldY, oldConsumerId]) => {
 
-    if (newItemId == null) {
+    if (itemIdForTooltip.value == null) {
         itemName.value = null
         itemDescription.value = null
         if (tooltipDiv.value) {
             tooltipDiv.value.classList.remove("visible")
         }
+        if (isTouchOnly.value) {
+            tooltipDiv.value?.hidePopover();
+        }
         consumerId.value = null
         return;
     }
 
+    if (isTouchOnly.value) {
+        tooltipDiv.value?.showPopover();
+    }
+
     tooltipDiv.value!.classList.add("visible")
 
-    item.value = itemCache.get(newItemId)!
+    item.value = itemCache.get(itemIdForTooltip.value)!
 
-    consumerId.value = newConsumerId;
+    consumerId.value = consumerIdForTooltip.value;
 
     itemName.value = item.value.name.toUpperCase().split(',').reverse();
 
@@ -48,7 +55,7 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([newItemId,
 
     damageDescription.value = null
     upgradeDescription.value = null
-    if (newConsumerId?.startsWith("RARE_WEAPONS|")) {
+    if (consumerId.value!.startsWith("RARE_WEAPONS|")) {
         let dam = "";
         dam += "DAMAGE: " + dmgString(item.value.originalDmg);
         if (item.value.originalDmg_1h) {
@@ -57,14 +64,14 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([newItemId,
         }
         damageDescription.value = dam;
 
-        if (! newConsumerId!.includes("NO_UPGRADE")) {
+        if (! consumerId.value!.includes("NO_UPGRADE")) {
             let ug = "<span style='text-decoration: underline;'>UPGRADED TO</span><br />";
             let statKey = "";
-            if (newConsumerId!.includes("ELITE_SOCKETS_ZOD_4015")) statKey = "upSocketZod4015";
-            else if (newConsumerId!.includes("ELITE_SOCKETS_ZOD_OHM")) statKey = "upSocketZodOhm";
-            else if (newConsumerId!.includes("ELITE_SOCKETS_ZOD")) statKey = "upSocketZod";
-            if (newConsumerId!.includes("ETHEREAL")) statKey = statKey.replaceAll("Zod","") + "_eth";
-            if (newConsumerId!.includes("ONE_HANDED")) {
+            if (consumerId.value!.includes("ELITE_SOCKETS_ZOD_4015")) statKey = "upSocketZod4015";
+            else if (consumerId.value!.includes("ELITE_SOCKETS_ZOD_OHM")) statKey = "upSocketZodOhm";
+            else if (consumerId.value!.includes("ELITE_SOCKETS_ZOD")) statKey = "upSocketZod";
+            if (consumerId.value!.includes("ETHEREAL")) statKey = statKey.replaceAll("Zod","") + "_eth";
+            if (consumerId.value!.includes("ONE_HANDED")) {
                 let statKey1h = statKey + "_1h";
                 if ((item.value as any)[statKey1h] != null) {
                     statKey = statKey1h;
@@ -105,23 +112,30 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([newItemId,
     }
     
 
-      if (item.value.quality == 'RARE') nameCssClass.value = 'yellow';
-      else if (item.value.quality == 'SET') nameCssClass.value = 'set-green';
-      else if (item.value.quality == 'MAGIC') nameCssClass.value = 'blue';
-      else if (item.value.quality == 'UNIQUE') nameCssClass.value = 'gold';
-      else nameCssClass.value = 'white';
+    if (item.value.quality == 'RARE') nameCssClass.value = 'yellow';
+    else if (item.value.quality == 'SET') nameCssClass.value = 'set-green';
+    else if (item.value.quality == 'MAGIC') nameCssClass.value = 'blue';
+    else if (item.value.quality == 'UNIQUE') nameCssClass.value = 'gold';
+    else nameCssClass.value = 'white';
+
+    if (isTouchOnly.value) {
+
+    } else {
+        const pw = tooltipDiv.value!.offsetWidth  || 280;
+        const ph = tooltipDiv.value!.offsetHeight || 200;
+
+        let x = tooltipX.value! + 16;
+        let y = tooltipY.value! + 16;
+
+        if (x + pw > window.innerWidth  - 10) x = tooltipX.value! - pw - 16
+        if (y + ph > window.innerHeight - 10) y = tooltipY.value! - ph - 16;
+
+        tooltipDiv.value!.style.left = x + 'px';
+        tooltipDiv.value!.style.top  = y + 'px';  
+    }
     
-    const pw = tooltipDiv.value!.offsetWidth  || 280;
-    const ph = tooltipDiv.value!.offsetHeight || 200;
+      
 
-    let x = tooltipX.value! + 16;
-    let y = tooltipY.value! + 16;
-
-    if (x + pw > window.innerWidth  - 10) x = tooltipX.value! - pw - 16
-    if (y + ph > window.innerHeight - 10) y = tooltipY.value! - ph - 16;
-
-    tooltipDiv.value!.style.left = x + 'px';
-    tooltipDiv.value!.style.top  = y + 'px';  
 
 }, { immediate: true });
 
@@ -129,7 +143,7 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([newItemId,
 
 <template>
   
-    <div id="itemTooltip" ref="tooltipDiv">
+    <div id="itemTooltip" ref="tooltipDiv" :popover="isTouchOnly ? 'auto' : null">
         <template v-if="itemName">
             <template v-for="line in itemName">
                 <div :class="nameCssClass" style="font-weight:bold">{{ line }}</div>

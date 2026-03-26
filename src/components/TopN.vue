@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onRenderTriggered, watch } from 'vue'
-import { itemCache, snapshotData } from '../app-state'
+import { isNarrowWindow, itemCache, snapshotData } from '../app-state'
 import { D2TopNItem } from '../model/D2Item'
 
 const props = defineProps<{
@@ -50,13 +50,15 @@ watch(
     </template>
 
     <table class="d2-item-table">
-      <thead>
-      <tr>
-        <th>Score</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-      </thead>
+      <template v-if="!isNarrowWindow">
+        <thead>
+          <tr>
+            <th>Score</th>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+      </template>
       <tbody>
       <template v-for="item in items" :key="item.item.id">
         <D2ItemRow :item="item" :consumer-id="props.consumerId" />

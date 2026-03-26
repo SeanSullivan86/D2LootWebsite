@@ -33,7 +33,7 @@ function formatPercentage(num:number) {
 </script>
 
 <template>
-    <div style="color: white; margin:8px 0px;">Unique Items</div>
+    <div style="color: white; margin:8px 0px;">Are we ever going to see a 100% perfect Tomb Reaver? Probably not ...</div>
     <template v-if="rows.length > 0">
         <table class="itemGrid">
             <thead>
@@ -78,6 +78,14 @@ function formatPercentage(num:number) {
 </template>
 
 <style scoped>
+
+table.itemGrid thead th {
+  z-index: 2;
+  position: sticky;
+  top: -1px;
+  box-shadow: inset 0 -1px 0 #ccc; 
+}
+
 table.itemGrid {
   border-collapse: collapse;
 }

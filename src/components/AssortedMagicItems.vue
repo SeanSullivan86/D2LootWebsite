@@ -80,6 +80,14 @@ watch(
 </template>
 
 <style scoped>
+
+table.itemGrid thead th {
+  z-index: 2;
+  position: sticky;
+  top: -1px;
+  box-shadow: inset 0 -1px 0 #ccc; 
+}
+
 table.itemGrid {
   border-collapse: collapse;
 }
