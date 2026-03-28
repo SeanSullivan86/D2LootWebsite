@@ -23,5 +23,6 @@ declare module '@vue/runtime-core' {
     TogglingSectionHeader: typeof import('./src/components/TogglingSectionHeader.vue')['default']
     TopN: typeof import('./src/components/TopN.vue')['default']
     UseCase: typeof import('./src/components/UseCase.vue')['default']
+    WeaponScoresChart: typeof import('./src/components/WeaponScoresChart.vue')['default']
   }
 }

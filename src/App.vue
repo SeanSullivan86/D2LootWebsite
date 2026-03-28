@@ -11,6 +11,7 @@ import StatsAcrossDropSources from './components/StatsAcrossDropSources.vue'
 import AffixFrequencyBug from './components/AffixFrequencyBug.vue'
 import GoldBug from './components/GoldBug.vue'
 import IllegalStaffmodsBug from './components/IllegalStaffmodsBug.vue'
+import WeaponScoresChart from './components/WeaponScoresChart.vue'
 
 const isLoaded = ref<number>(0)
 const selectedDropContext = ref<string>("ALL")
@@ -155,9 +156,6 @@ const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + 
     <input type="radio" id="RW_ELITE_SOCKETS_ZOD_OHM" value="ELITE_SOCKETS_ZOD_OHM" v-model="rwUpgradeOption" />
     <label for="RW_ELITE_SOCKETS_ZOD_OHM">Upgrade to Elite. Add socket if possible. Add Zod rune if needed to make ethereal item long-lasting. Fill remaining slots with Ohm runes (50% ED).</label>
     <br />
-    <input type="radio" id="RW_ELITE_SOCKETS_ZOD" value="ELITE_SOCKETS_ZOD" v-model="rwUpgradeOption" />
-    <label for="RW_ELITE_SOCKETS_ZOD">Upgrade to Elite. Add socket if possible. Add Zod rune if needed to make ethereal item long-lasting. Leave other sockets open.</label>
-    <br />
     <input type="radio" id="RW_NO_UPGRADE" value="NO_UPGRADE" v-model="rwUpgradeOption" />
     <label for="RW_NO_UPGRADE">Do not upgrade/socket the item.</label>
   </div>
@@ -196,6 +194,10 @@ const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + 
   </div>
 
   <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" :consumer-id="rwConsumerName"  />
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Rare Weapon Damage Charts">
+  <WeaponScoresChart :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_WEAPON_SCORES|MAX_DMG|ELITE_SOCKETS_ZOD_OHM|TWO_HANDED|CAN_BE_MADE_LONG_LASTING"  />
 </TogglingSectionHeader>
 
 <TogglingSectionHeader title="<span class='yellow'>Rare</span> 'Fools' Weapons (2-handed)">
