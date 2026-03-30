@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 const path = require('path')
 
@@ -10,10 +8,6 @@ export default defineConfig({
   base: '/D2LootWebsite/',
   plugins: [
     vue(),
-    Components({
-      dts: true,
-      resolvers: [ElementPlusResolver()],
-    }),
   ],
   resolve: {
     alias: [

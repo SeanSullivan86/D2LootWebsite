@@ -1,24 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { isNarrowWindow, itemCache, setSnapshotData } from './app-state'
-import CategorizedTopN from './components/CategorizedTopN.vue'
-import ItemGrid from './components/ItemGrid.vue'
-import PerfectUniques from './components/PerfectUniques.vue'
-import AssortedMagicItems from './components/AssortedMagicItems.vue'
-import TogglingSectionHeader from './components/TogglingSectionHeader.vue'
-import TopN from './components/TopN.vue'
-import StatsAcrossDropSources from './components/StatsAcrossDropSources.vue'
-import AffixFrequencyBug from './components/AffixFrequencyBug.vue'
-import GoldBug from './components/GoldBug.vue'
-import IllegalStaffmodsBug from './components/IllegalStaffmodsBug.vue'
-import WeaponScoresChart from './components/WeaponScoresChart.vue'
 
 const isLoaded = ref<number>(0)
 const selectedDropContext = ref<string>("ALL")
 const snapshotId = ref<string|null>(null)
 
 onMounted(() => {
-  console.log("Start of onMounted hook in App.vue")
   loadData()
 })
 
@@ -47,6 +35,11 @@ const rwScoringOption = ref<string>("DPS")
 
 const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + "|" +
   rwUpgradeOption.value + "|" + rwHandednessOption.value + "|" + rwEtherealOption.value);
+
+const rwdcDamageOption = ref<string>("MAX_DMG|ELITE_SOCKETS_ZOD_OHM")
+const rwdcEtherealOption = ref<string>("CAN_BE_MADE_LONG_LASTING")
+
+const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption.value + "|TWO_HANDED|" + rwdcEtherealOption.value);
 
 </script>
 
@@ -197,7 +190,27 @@ const rwConsumerName = computed(() => "RARE_WEAPONS|" + rwScoringOption.value + 
 </TogglingSectionHeader>
 
 <TogglingSectionHeader title="Rare Weapon Damage Charts">
-  <WeaponScoresChart :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_WEAPON_SCORES|MAX_DMG|ELITE_SOCKETS_ZOD_OHM|TWO_HANDED|CAN_BE_MADE_LONG_LASTING"  />
+  <div class="rareWeaponFormSection"> 
+    <span class="text-description">Choose a chart:</span>
+    <br />
+    <input type="radio" id="RWDC_ELITE_SOCKETS_ZOD_4015" value="DPS|ELITE_SOCKETS_ZOD_4015" v-model="rwdcDamageOption" />
+    <label for="RWDC_ELITE_SOCKETS_ZOD_4015">Upgrade to Elite. Add socket if possible. Add Zod rune if needed to make ethereal item long-lasting. Fill remaining slots with 40%ED/15ias jewels. Graphs the frequency of different DPS amounts.</label>
+    <br />
+    <input type="radio" id="RWDC_ELITE_SOCKETS_ZOD_OHM" value="MAX_DMG|ELITE_SOCKETS_ZOD_OHM" v-model="rwdcDamageOption" />
+    <label for="RWDC_ELITE_SOCKETS_ZOD_OHM">Upgrade to Elite. Add socket if possible. Add Zod rune if needed to make ethereal item long-lasting. Fill remaining slots with Ohm runes (50% ED). Graphs the frequency of different Max Damage amounts.</label>
+  </div>
+
+  <div class="rareWeaponFormSection"> 
+    <span class="text-description">Do you need the items to be long-lasting (repairable) or is ethereal ok (like for a mercenary)?</span>
+    <br />
+    <input type="radio" id="RWDC_CAN_BE_MADE_LONG_LASTING" value="CAN_BE_MADE_LONG_LASTING" v-model="rwdcEtherealOption" />
+    <label for="RWDC_CAN_BE_MADE_LONG_LASTING">Only include items that are repairable or indestructible or can be fixed with a Zod rune to become indestructible.</label>
+    <br />
+    <input type="radio" id="RWDC_ETHEREAL" value="ETHEREAL" v-model="rwdcEtherealOption" />
+    <label for="RWDC_ETHEREAL">Only include ethereal items, and don't put Zod runes in them.</label>
+  </div>
+
+  <WeaponScoresChart :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" :consumer-id="rwdcConsumerName"  />
 </TogglingSectionHeader>
 
 <TogglingSectionHeader title="<span class='yellow'>Rare</span> 'Fools' Weapons (2-handed)">

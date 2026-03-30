@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
-import { ITEM_QUALITY_NAMES, itemTypes, ItemType } from '../model/globals'
-import { itemCache, snapshotData, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly } from '../app-state'
+import { itemTypes } from '../model/globals'
+import { itemCache, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly } from '../app-state'
 
 const itemName = ref<string[]|null>(null)
 const itemDescription = ref<string[]|null>(null)
@@ -15,13 +15,14 @@ const upgradeDescription = ref<string|null>(null)
 
 const consumerId = ref<string|null>(null)
 
-onMounted(() => {
-  console.log("Start of onMounted hook in BasicStats")
-})
-
 function dmgString(dmgObject:any):string {
     return "<span class='blue'>" + dmgObject.min +
      "</span> to <span class='blue'>" + dmgObject.max + "</span>"
+}
+
+function parseEnhancedDamage(input: string): number | null {
+  const match = input.match(/\+([1-9]\d*)% ENHANCED DAMAGE/);
+  return match ? parseInt(match[1], 10) : null;
 }
 
 watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId, oldX, oldY, oldConsumerId]) => {
@@ -55,7 +56,10 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
 
     damageDescription.value = null
     upgradeDescription.value = null
-    if (consumerId.value!.startsWith("RARE_WEAPONS|")) {
+
+    let itemType = itemTypes.get(item.value.itemTypeCode)!
+
+    if (consumerId.value!.startsWith("RARE_WEAPONS|") || consumerId.value!.startsWith("FOOLS_WEAPON|")) {
         let dam = "";
         dam += "DAMAGE: " + dmgString(item.value.originalDmg);
         if (item.value.originalDmg_1h) {
@@ -65,17 +69,22 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
         damageDescription.value = dam;
 
         if (! consumerId.value!.includes("NO_UPGRADE")) {
+            damageDescription.value = "<span style='text-decoration: underline;'>ORIGINAL STATS</span><br />" + damageDescription.value 
+
             let ug = "<span style='text-decoration: underline;'>UPGRADED TO</span><br />";
             let statKey = "";
-            if (consumerId.value!.includes("ELITE_SOCKETS_ZOD_4015")) statKey = "upSocketZod4015";
+            if (consumerId.value!.includes("ELITE_SOCKETS_ZOD_4015") || consumerId.value!.startsWith("FOOLS_WEAPON|")) statKey = "upSocketZod4015";
             else if (consumerId.value!.includes("ELITE_SOCKETS_ZOD_OHM")) statKey = "upSocketZodOhm";
             else if (consumerId.value!.includes("ELITE_SOCKETS_ZOD")) statKey = "upSocketZod";
             if (consumerId.value!.includes("ETHEREAL")) statKey = statKey.replaceAll("Zod","") + "_eth";
-            if (consumerId.value!.includes("ONE_HANDED")) {
+
+            let handednessStr = "2-HANDED ";
+            if (consumerId.value!.includes("ONE_HANDED") || consumerId.value!.includes("1_HANDED")) {
                 let statKey1h = statKey + "_1h";
                 if ((item.value as any)[statKey1h] != null) {
                     statKey = statKey1h;
                 }
+                handednessStr = "1-HANDED ";
             }
 
             let upgradedDamage = (item.value as any)[statKey]
@@ -83,8 +92,20 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
                 ug += "<span class='yellow' style='font-weight:bold'>" + itemTypes.get(upgradedDamage.itemType)!.name + "</span><br />";
             }
 
-            ug += "DAMAGE: " + dmgString(upgradedDamage);
+            ug += (itemType.itemTypeTypeCode == "swor" ? handednessStr : "") + "DAMAGE: " + dmgString(upgradedDamage);
+
             if (upgradedDamage.sockets && upgradedDamage.sockets.length > 0) {
+                let originalEd = parseEnhancedDamage(item.value.description.toUpperCase()) ?? 0;
+                let edBonus = 0
+                let iasBonus = 0
+                for (const socketFiller of upgradedDamage.sockets) {
+                    if (socketFiller == '15_40') { edBonus += 40; iasBonus += 15; }
+                    if (socketFiller == 'ohm') { edBonus += 50; }
+                }
+                if (edBonus > 0) {
+                    ug += "<br />" + originalEd + " + " + edBonus + " = <span class='blue'>" + (originalEd+edBonus) + "% ENHANCED DAMAGE</span>";
+                }
+
                 ug += "<br />Sockets: [" + upgradedDamage.sockets.join(" , ") + "]";
             }
             upgradeDescription.value = ug;

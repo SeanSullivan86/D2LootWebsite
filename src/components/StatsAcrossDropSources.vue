@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { type D2Item } from '../model/D2Item'
-import { ITEM_QUALITY_NAMES, DROP_CONTEXT_FRIENDLY_NAMES } from '../model/globals'
-import { itemCache, snapshotData, arraySum } from '../app-state'
+import { ref, watch } from 'vue'
+import { DROP_CONTEXT_FRIENDLY_NAMES } from '../model/globals'
+import { snapshotData, arraySum } from '../app-state'
 
 interface StatsForDropContext {
     kills:number,

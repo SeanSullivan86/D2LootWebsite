@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onRenderTriggered, watch } from 'vue'
-import { arraySum, snapshotData, createItemTooltip, moveItemTooltip, destroyItemTooltip } from '../app-state'
+import { ref, watch } from 'vue'
+import { arraySum, snapshotData } from '../app-state'
 
 
 const props = defineProps<{

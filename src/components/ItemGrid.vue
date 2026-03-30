@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onRenderTriggered, watch } from 'vue'
-import { itemCache, snapshotData, arraySum } from '../app-state'
-import { D2TopNItem } from '../model/D2Item'
+import { ref, computed, watch } from 'vue'
+import { snapshotData, arraySum } from '../app-state'
 
 const props = defineProps<{
   snapshotId: string,
@@ -32,9 +31,6 @@ watch(
   [() => props.snapshotId, () => props.dropContext, () => props.consumerId],
   ([newSnapshotId, newDropContext, newConsumerId], [oldSnapshotId, oldDropContext, oldConsumerId]) => {
     const consumerSnapshot = snapshotData.dropContexts[props.dropContext].consumersById[props.consumerId]
-    console.log(props.consumerId)
-    console.log(newConsumerId)
-    console.log(consumerSnapshot)
 
     rowCount.value = consumerSnapshot.rowValues.length;
     columnCount.value = consumerSnapshot.columnValues.length;

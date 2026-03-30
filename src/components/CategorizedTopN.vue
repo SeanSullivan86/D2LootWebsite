@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onRenderTriggered, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { itemCache, snapshotData, isNarrowWindow } from '../app-state'
 import { D2TopNItem } from '../model/D2Item'
 import { friendlyItemTypeTypeName } from '../model/globals'

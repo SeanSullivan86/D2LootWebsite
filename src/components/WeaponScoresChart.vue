@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onRenderTriggered, watch } from 'vue'
-import { arraySum, snapshotData, createItemTooltip, moveItemTooltip, destroyItemTooltip } from '../app-state'
+import { ref, watch } from 'vue'
+import { snapshotData } from '../app-state'
 import type { AgChartOptions } from "ag-charts-types";
 import { AgCharts } from "ag-charts-vue3";
 
@@ -17,6 +17,10 @@ watch(
   [() => props.snapshotId, () => props.dropContext, () => props.consumerId],
   ([newSnapshotId, newDropContext, newConsumerId], [oldSnapshotId, oldDropContext, oldConsumerId]) => {
 
+    let scoreType = "UNKNOWN";
+    if (newConsumerId.includes("|DPS|")) scoreType = "DPS";
+    if (newConsumerId.includes("|MAX_DMG|")) scoreType = "Max Damage";
+
     const consumerSnapshot = snapshotData.dropContexts[newDropContext].consumersById[newConsumerId];
 
     const allCategories = Object.keys(consumerSnapshot.categories);
@@ -24,13 +28,14 @@ watch(
     for (const [category, categoryObj] of Object.entries(consumerSnapshot.categories)) {
       for (const [score, freq] of Object.entries((categoryObj as any).scoreDistribution as any)) {
         let scoreObject:any = null;
-        if (scoreObjects[score] == undefined) {
-          scoreObject = { score: Number(score), total: 0 };
-          scoreObjects[score] = scoreObject;
+        let floorScore = Math.floor(Number(score)/25)*25;
+        if (scoreObjects[floorScore.toString()] == undefined) {
+          scoreObject = { score: Number(floorScore), total: 0 };
+          scoreObjects[floorScore.toString()] = scoreObject;
         } else {
-          scoreObject = scoreObjects[score];
+          scoreObject = scoreObjects[floorScore.toString()];
         }
-        scoreObject[category] = Number(freq);
+        scoreObject[category] = (scoreObject[category] ?? 0) + Number(freq);
         scoreObject.total += Number(freq);
       }
     }
@@ -39,23 +44,29 @@ watch(
     chartData.sort((a,b) => a.score - b.score);
 
     const chartSeries:any[] = [];
-    allCategories.forEach(category => { chartSeries.push({ type: "scatter", xKey: "score", yKey: category }) });
+    //allCategories.forEach(category => { chartSeries.push({ type: "area", xKey: "score", yKey: category, stacked: true, normalizedTo: 1 }) });
+    allCategories.forEach(category => { chartSeries.push({ type: "line", xKey: "score", yKey: category }) });
 
-    console.log(chartSeries);
     chartOptions.value = {
       data: chartData,
       title: {
-        text: "2-handed Rare Weapon Damage",
+        text: scoreType + " Distribution", spacing: 10
       },
       legend: {
-        position: 'bottom', 
+        position: 'bottom', spacing: 5, maxHeight: 150
+      },
+      tooltip: {
+        mode: 'shared'
+      },
+      padding: {
+        left: 5, bottom: 5, top: 5, right: 5
       },
       axes: {
         x: {
             type: 'number',
             // min: 0, max: 13000,
-            // interval: { step: 2000 },
-            title: { text: 'Max Damage' },
+            // interval: { step: 100 },
+            title: { text: scoreType, spacing: 2 },
             label: {
               formatter: function (params) {
                 return (params.value as number).toLocaleString()
@@ -65,7 +76,7 @@ watch(
         y: {
             type: 'log',
             base: 10,
-            title: { text: 'Times Occurred' },
+            title: { text: 'Item Count', spacing: 2 },
             label: {
               formatter: function (params) {
                 return (params.value as number).toLocaleString()

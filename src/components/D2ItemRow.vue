@@ -1,9 +1,9 @@
 <script setup lang="ts">
 
-import { ref, computed } from 'vue'
-import { D2Item, D2TopNItem } from '../model/D2Item'
-import { itemTypes, ItemType } from '../model/globals'
-import { createItemTooltip, moveItemTooltip, destroyItemTooltip, isNarrowWindow, isTouchOnly } from '../app-state'
+import { computed } from 'vue'
+import { D2TopNItem } from '../model/D2Item'
+import { itemTypes } from '../model/globals'
+import { createItemTooltip, moveItemTooltip, destroyItemTooltip, isNarrowWindow } from '../app-state'
 
 const props = defineProps<{
   consumerId: string,
