@@ -737,3 +737,436 @@ export class ItemType {
 
 itemTypeTsv.split(/\r?\n/)
     .forEach(line => { let itemType = new ItemType(line); itemTypes.set(itemType.code, itemType) });
+
+
+export class D2PropertyRange {
+    name:string;
+    param?:string;
+    min:number;
+    max:number;
+
+    constructor(arrayData:string[], offset:number) {
+        this.name = arrayData[offset];
+        if (arrayData[offset+1]) this.param = arrayData[offset+1];
+        this.min = Number(arrayData[offset+2]);
+        this.max = Number(arrayData[offset+3]);
+    }
+}
+
+
+export class UniqueItem {
+    readonly name:string;
+    readonly itemCode:string;
+    readonly qlvl:number;
+    readonly properties:D2PropertyRange[];
+
+    constructor(tsvString:string) {
+        let parts:string[] = tsvString.split("\t");
+        this.name = parts[0];
+        this.itemCode = parts[1];
+        this.qlvl = Number(parts[2]);
+        this.properties = [];
+        const paramCount = (parts.length - 3)/4;
+        if (!Number.isInteger(paramCount)) { console.error("Unexpected paramCount " + paramCount + " : " + tsvString); throw "Unexpected Param Count"; }
+        for (let i = 0; i < paramCount; i++) {
+            this.properties.push(new D2PropertyRange(parts, 3 + 4*i));
+        }
+    }
+
+    getItemType():ItemType {
+        return itemTypes.get(this.itemCode)!
+    }
+}
+
+
+
+const uniqueItemsTsv:string = `The Gnasher	hax	7	dmg%		60	70
+Deathspade	axe	12	dmg%		60	70
+Bladebone	2ax	20	dmg%		30	50
+Skull Splitter	mpi	28	ltng-max		12	15	att		50	100	dmg%		60	100
+Rakescar	wax	36	dmg%		75	150
+Axe of Fechmar	lax	11	dmg%		70	90
+Goreshovel	bax	19	dmg%		40	50
+The Chieftain	btx	26	res-all		10	20
+Brainhew	gax	34	manasteal		10	13	dmg%		50	80
+Humongous	gix	39	str		20	30	dmg-max		15	25	dmg%		80	120
+Torch of Iro	wnd	7
+Maelstrom	ywn	19	skill	74	1	3	skill	77	1	3	skill	66	1	3	skill	76	1	3
+Gravenspine	bwn	27	mana		25	50
+Ume's Lament	gwn	38
+Felloak	clb	4	dmg%		70	80
+Knell Striker	scp	7	dmg%		70	80
+Rusthandle	gsc	23	dmg%		50	60	dmg-undead		50	60	skill	111	1	3
+Stormeye	wsp	31	dmg%		80	120	skill	110	3	5
+Stoutnail	spc	7	thorns		3	10
+Crushflange	mac	12	dmg%		50	60
+Bloodrise	mst	20
+The General's Tan Do Li Ga	fla	28	dmg%		50	60
+Ironstone	whm	36	att		100	150	dmg%		100	150
+Bonesnap	mau	32	dmg%		200	300
+Steeldriver	gma	39	dmg%		150	250
+Rixot's Keen	ssd	3
+Blood Crescent	scm	10	dmg%		60	80
+Skewer of Krintiz	sbr	14
+Gleamscythe	flc	18	dmg%		60	100
+Griswold's Edge	bsd	23	fire-min		10	12	fire-max		15	25	dmg%		80	120
+Hellplague	lsd	30	dmg%		70	80
+Culwen's Point	wsd	39	dmg%		70	80
+Shadowfang	2hs	16
+Soulflay	clm	26	manasteal		4	10	dmg%		70	100
+Kinemil's Awl	gis	31	att		100	150	fire-max		20	40	dmg%		80	100
+Blacktongue	bsw	35	dmg%		50	60
+Ripsaw	flb	35	dmg%		80	100
+The Patriarch	gsd	39	dmg%		100	120
+Gull	dgr	6
+The Diggler	dir	15
+The Jade Tan Do	kri	26	att		100	150
+Spectral Shard	bld	34
+The Dragon Chang	spr	11
+Razortine	tri	16	dmg%		30	50
+Bloodthief	brn	23	lifesteal		8	12	dmg%		50	70
+Lance of Yaggai	spt	30
+The Tannr Gorerod	pik	36	dmg%		80	100
+Dimoak's Hew	bar	11
+Steelgoad	vou	19	dmg%		60	80	dur		20	40
+Soul Harvest	scy	26	dmg%		50	90
+The Battlebranch	pax	34	dmg%		50	70	att		50	100
+Woestave	hal	38	dmg%		20	40
+The Grim Reaper	wsc	39
+Bane Ash	sst	7	dmg%		50	60
+Serpent Lord	lst	12	dmg%		30	40
+Spire of Lazarus	cst	24
+The Salamander	bst	28
+The Iron Jang Bong	wst	38
+Pluckeye	sbw	10
+Witherstring	hbw	18	dmg%		40	50
+Raven Claw	lbw	20	dmg%		60	70
+Rogue's Bow	cbw	27	dmg%		40	60
+Stormstrike	sbb	34	dmg%		70	90
+Wizendraw	lbb	35	att		50	100	dmg%		70	80	pierce-cold		20	35
+Hellclap	swb	36	fire-max		30	50	att		50	75	dmg%		70	90
+Blastbark	lwb	38	dmg%		70	130
+Leadcrow	lxb	12
+Ichorsting	mxb	24
+Hellcast	hxb	36	dmg%		70	80
+Doomslinger	rxb	38	dmg%		60	100
+Biggin's Bonnet	cap	4
+Tarnhelm	skp	20	mag%		25	50
+Coif of Glory	hlm	19
+Duskdeep	fhl	23	ac		10	20	ac%		30	50
+Wormskull	bhm	28
+Howltusk	ghm	34
+Undead Crown	crn	39	ac%		30	60	att-undead		50	100
+The Face of Horror	msk	27
+Greyform	qui	10
+Blinkbat's Form	lea	16
+The Centurion	hla	19
+Twitchthroe	stu	22
+Darkglow	rng	19	ac%		70	100
+Hawkmail	scl	20	ac%		80	100
+Sparking Mail	chn	23	ac%		75	85	light-thorns		10	14
+Venom Ward	brs	27	ac%		60	100
+Iceblink	spl	30	ac%		70	80
+Boneflesh	plt	35	ac%		100	120
+Rockfleece	fld	38	ac%		100	130
+Rattlecage	gth	39
+Goldskin	ful	38	ac%		120	150
+Silks of the Victor	aar	38	ac%		100	120
+Heavenly Garb	ltp	39
+Pelta Lunata	buc	3	ac%		30	40	dur		8	12
+Umbral Disk	sml	12	ac%		40	50	dur		10	15
+Stormguild	lrg	18	ac%		50	60	dur		10	15
+Wall of the Eyeless	bsh	27	ac%		30	40
+Swordback Hold	spk	20	bloody		3	5	ac%		30	60
+Steelclash	kit	23	ac%		60	100	dur		15	20
+Bverrit Keep	tow	26	ac%		80	120	dur		80	100
+The Ward	gts	35	res-all		30	50
+The Hand of Broc	lgl	7	ac%		10	20
+Bloodfist	vgl	12	ac%		10	20
+Chance Guards	mgl	20	mag%		25	40	ac%		20	30
+Magefist	tgl	31	ac%		20	30
+Frostburn	hgl	39	ac%		10	20
+Hotspur	lbt	7	ac%		10	20
+Gorefoot	vbt	12	bloody		3	5	ac%		20	30
+Treads of Cthon	mbt	20	ac%		30	40
+Goblin Toe	tbt	30	ac%		50	60
+Tearhaunch	hbt	39	ac%		60	80
+Lenymo	lbl	10
+Snakecord	vbl	16	ac%		20	30
+Nightsmoke	mbl	27	ac%		30	50
+Goldwrap	tbl	36	ac%		40	60	gold%		50	80
+Bladebuckle	hbl	39	ac%		80	100
+Nokozan Relic	amu	14
+The Eye of Etlich	amu	20	ac-miss		10	40	light		1	5	lifesteal		3	7	cold-min		1	2	cold-max		3	5	cold-len		50	250
+The Mahim-Oak Curio	amu	34
+Nagelring	rin	10	att		50	75	mag%		15	30
+Manald Heal	rin	20	manasteal		4	7	regen		5	8
+The Stone of Jordan	rin	39
+Amulet of the Viper	vip	0
+Staff of Kings	msf	0
+Horadric Staff	hst	0
+Hell Forge Hammer	hfh	0
+Khalim's Flail	qf1	0
+Khalim's Will	qf2	0
+Coldkill	9ha	44	dmg%		150	190
+Butcher's Pupil	9ax	47	dmg%		150	200
+Islestrike	92a	51	dmg%		170	190
+Pompeii's Wrath	9mp	53	dmg%		140	170
+Guardian Naga	9wa	56	dmg%		150	180
+Warlord's Trust	9la	43
+Spellsteel	9ba	47	red-mag		12	15
+Stormrider	9bt	49
+Boneslayer Blade	9ga	50	dmg%		180	220
+The Minotaur	9gi	53	str		15	20	dmg%		140	200
+Suicide Branch	9wn	41
+Carin Shard	9yw	43
+Arm of King Leoric	9bw	44
+Blackhand Key	9gw	49
+Dark Clan Crusher	9cl	42	att%		20	25
+Zakarum's Hand	9sc	45	dmg%		180	220
+The Fetid Sprinkler	9qs	46	dmg%		160	190	att		150	200
+Hand of Blessed Light	9ws	50	dmg%		130	160
+Fleshrender	9sp	46	dmg%		130	200
+Sureshrill Frost	9ma	47	dmg%		150	180
+Moonfall	9mt	50	red-mag		9	12	dmg%		120	150
+Baezil's Vortex	9fl	53	dmg%		160	200
+Earthshaker	9wh	51
+Bloodtree Stump	9m9	56	dmg%		180	220
+The Gavel of Pain	9gm	53	dmg%		130	160
+Bloodletter	9ss	38	skill	127	2	4	skill	151	1	3
+Coldsteel Eye	9sm	39	dmg%		200	250
+Hexfire	9sb	41	dmg%		140	160
+Blade of Ali Baba	9fc	43	dmg%		60	120	dex		5	15
+Ginther's Rift	9cr	45	red-mag		7	12	dmg%		100	150
+Headstriker	9bs	47
+Plague Bearer	9ls	49
+The Atlantean	9wd	50	dmg%		200	250
+Crainte Vomir	92h	50	dmg%		160	200
+Bing Sz Wang	9cm	51	dmg%		130	160
+The Vile Husk	9gs	52	dmg%		150	200
+Cloudcrack	9b9	53	dmg%		150	200
+Todesfaelle Flamme	9fb	54	dmg%		120	160
+Swordguard	9gd	55	res-all		10	20	dmg%		170	180
+Spineripper	9dg	40	dmg%		200	240
+Heart Carver	9di	44	dmg%		190	240
+Blackbog's Sharp	9kr	46
+Stormspike	9bl	49
+The Impaler	9sr	39	dmg%		140	170
+Kelpie Snare	9tr	41	dmg%		140	180
+Soulfeast Tine	9br	43	dmg%		150	190	att		150	250
+Hone Sundan	9st	45	dmg%		160	200
+Spire of Honor	9p9	47	dmg%		150	200
+The Meat Scraper	9b7	49	dmg%		150	200
+Blackleach Blade	9vo	50	dmg%		100	140
+Athena's Wrath	9s8	50	dru		1	3	dmg%		150	180
+Pierre Tombale Couant	9pa	51	dmg%		160	220	att		100	200
+Husoldal Evo	9h9	52	att		200	250	dmg%		160	200
+Grim's Burning Dead	9wc	52	dmg%		140	180	att		200	250
+Razorswitch	8ss	36
+Ribcracker	8ls	39	dmg%		200	300
+Chromatic Ire	8cs	43	res-all		20	40	hp%		20	25
+Warpspear	8bs	47
+Skull Collector	8ws	49
+Skystrike	8sb	36	dmg%		150	200
+Riphook	8hb	39	dmg%		180	220	lifesteal		7	10
+Kuko Shakaku	8lb	41	dmg%		150	180
+Endlesshail	8cb	44	skill	26	3	5	dmg%		180	220
+Witchwild String	8s8	47	dmg%		150	170
+Cliffkiller	8l8	49	dmg%		190	230	dmg-min		5	10	dmg-max		20	30
+Magewrath	8sw	51	red-mag		9	13	att		200	250	dmg%		120	150
+Goldstrike Arch	8lw	54	dmg%		200	250	att%		100	150	dmg-undead		100	200	dmg-demon		100	200
+Langer Briser	8lx	40	dmg%		170	200	mag%		30	60	dmg-max		10	30
+Pus Spitter	8mx	44	dmg%		150	220
+Buriza-Do Kyanon	8hx	59	ac		75	150	dmg%		150	200
+Demon Machine	8rx	57
+Peasant Crown	xap	36	regen		6	12
+Rockstopper	xkp	39	res-ltng		20	40	ac%		160	220	res-fire		20	50	res-cold		20	40
+Stealskull	xlm	43	ac%		200	240	mag%		30	50
+Darksight Helm	xhl	46	res-fire		20	40
+Valkyrie Wing	xhm	52	ac%		150	200	ama		1	2	mana-kill		2	4
+Crown of Thieves	xrn	57	lifesteal		9	12	ac%		160	200	gold%		80	100
+Blackhorn's Face	xsk	49	ac%		180	220
+Vampire Gaze	xh9	49	manasteal		6	8	lifesteal		6	8	red-dmg%		15	20	red-mag		10	15
+The Spirit Shroud	xui	36	red-mag		7	11
+Skin of the Vipermagi	xea	37	res-all		20	35	red-mag		9	13
+Skin of the Flayed One	xla	39	regen		15	25	lifesteal		5	7	ac%		150	190
+Iron Pelt	xtu	41	red-mag		10	16	red-dmg		15	20	ac%		50	100
+Spirit Forge	xng	43	ac%		120	160
+Crow Caw	xcl	45	ac%		150	180
+Shaftstop	xhn	46	ac%		180	220
+Duriel's Shell	xrs	49	ac%		160	200
+Skullder's Ire	xpl	50	ac%		160	200
+Guardian Angel	xlt	53	ac%		180	200
+Toothrow	xld	56	thorns		20	40	ac		40	60	ac%		160	220
+Atma's Wail	xth	59	ac%		120	160
+Black Hades	xul	61	att-demon		200	250	ac%		140	200	dmg-demon		30	60
+Corpsemourn	xar	63	ac%		150	180
+Que-Hegan's Wisdom	xtp	59	red-mag		6	10	ac%		140	160
+Visceratuant	xuc	36	ac%		100	150
+Moser's Blessed Circle	xml	39	ac%		180	220
+Stormchaser	xrg	43	ac%		160	220
+Tiamat's Rebuke	xit	46	res-all		25	35	ac%		140	200
+Gerke's Sanctuary	xow	52	red-dmg		11	16	red-mag		14	18	ac%		180	240	res-all		20	30
+Radament's Sphere	xts	58	ac%		160	200
+Lidless Wall	xsh	49	mana-kill		3	5	ac%		80	130
+Lance Guard	xpk	43	ac%		70	120
+Venom Grip	xlg	37	ac		15	25	ac%		130	160
+Gravepalm	xvg	39	dmg-undead		100	200	att-undead		100	200	ac%		140	180
+Ghoulhide	xmg	44	manasteal		4	5	ac%		150	190
+Lava Gout	xtg	50	ac%		150	200
+Hellmouth	xhg	55	ac%		150	200
+Infernostride	xlb	37	ac%		120	150	gold%		40	70
+Waterwalk	xvb	40	ac%		180	210	hp		45	65
+Silkweave	xmb	44	ac%		150	190
+War Traveler	xtb	50	mag%		30	50	ac%		150	190	thorns		5	10
+Gore Rider	xhb	55	ac%		160	200
+String of Ears	zlb	37	red-mag		10	15	red-dmg%		10	15	lifesteal		6	8	ac%		150	180
+Razortail	zvb	39	ac%		120	150
+Gloom's Trap	zmb	45	ac%		120	150
+Snowclash	ztb	49	ac%		130	170
+Thundergod's Vigor	zhb	55	ac%		160	200
+Harlequin Crest	uap	69
+Veil of Steel	uhm	77
+The Gladiator's Bane	utu	85	ac%		150	200	red-mag		15	20	red-dmg		15	20
+Arkaine's Valor	upl	85	ac%		150	180	allskills		1	2	red-dmg		10	15
+Blackoak Shield	uml	67	ac%		160	200
+Stormshield	uit	77
+Hellslayer	7bt	71
+Messerschmidt's Reaver	7ga	75
+Baranar's Star	7mt	70
+Schaefer's Hammer	7wh	83	dmg%		100	130
+The Cranium Basher	7gm	85	dmg%		200	240
+Lightsabre	7cr	66	manasteal		5	7	dmg%		150	200
+Doombringer	7b7	75	dmg%		180	250	lifesteal		5	7
+The Grandfather	7gd	85	dmg%		150	250
+Wizardspike	7dg	69
+Stormspire	7wc	78	dmg%		150	250
+Eaglehorn	6l7	77
+Windforce	6lw	80	manasteal		6	8
+Bul-Kathos' Wedding Band	rin	66	lifesteal		3	5
+The Cat's Eye	amu	58
+The Rising Sun	amu	73
+Crescent Moon	amu	58	manasteal		11	15	lifesteal		3	6
+Mara's Kaleidoscope	amu	80	res-all		20	30
+Atma's Scarab	amu	60
+Dwarf Star	rin	53	red-mag		12	15
+Raven Frost	rin	53	dex		15	20	att		150	250
+Highlord's Wrath	amu	73
+Saracen's Chance	amu	55	res-all		15	25
+Arreat's Face	baa	50	ac%		150	200	lifesteal		3	6
+Homunculus	nea	50	ac%		150	200
+Titan's Revenge	ama	50	dmg%		150	200	lifesteal		5	9
+Lycander's Aim	am7	50	dmg%		150	200	manasteal		5	8
+Lycander's Flank	am9	50	dmg%		150	200	lifesteal		5	9
+The Oculus	oba	50
+Herald of Zakarum	pa9	50	ac%		150	200
+Bartuc's Cut-Throat	9tw	50	dmg%		150	200	lifesteal		5	9
+Jalal's Mane	dra	50	ac%		150	200
+The Scalper	9ta	65	dmg%		150	200	lifesteal		4	6
+Bloodmoon	7sb	69	dmg%		210	260	lifesteal		10	15	heal-kill		7	13
+Djinn Slayer	7sm	73	dmg%		190	240	dmg-demon		100	150	att-demon		200	300	abs-ltng		3	7	manasteal		3	6	sock		1	2
+Deathbit	9tk	52	dmg%		130	180	att		200	450	lifesteal		7	9	manasteal		4	6
+Warshrike	7bk	83	dmg%		200	250
+Gut Siphon	6rx	79	dmg%		160	220	lifesteal		12	18
+Razor's Edge	7ha	75	dmg%		175	225
+Demon Limb	7sp	71	dmg%		180	230	lifesteal		7	13	res-fire		15	20
+Steel Shade	ulm	70	ac%		100	130	abs-fire		5	11	manasteal		4	8	regen		10	18
+Tomb Reaver	7pa	86	dmg%		200	280	dmg-undead		150	230	mag%		50	80	res-all		30	50	att-undead		250	350	heal-kill		10	14	sock		1	3
+Death's Web	7gw	74	pierce-pois		40	50	heal-kill		7	12	mana-kill		7	12	skilltab	7	1	2
+Nature's Peace	rin	77	red-dmg		7	11	res-pois		20	30
+Azurewrath	7cr	87	dmg%		230	270	aura	Sanctuary	10	13	all-stats		5	10
+Seraph's Hymn	amu	73	skilltab	11	1	2	dmg-demon		25	50	dmg-undead		25	50	att-demon		150	250	att-undead		150	250
+Fleshripper	7kr	76	dmg%		200	300
+Horizon's Tornado	7fl	72	dmg%		230	280
+Stone Crusher	7wh	76	dmg%		280	320	str		20	30	dmg		10	30
+Jade Talon	7wb	74	dmg%		190	240	manasteal		10	15	res-all		40	50	skilltab	19	1	2	skilltab	20	1	2
+Shadow Dancer	uhb	79	ac%		70	100	dex		15	25	skilltab	19	1	2
+Cerebus' Bite	drb	71	ac%		130	140	skilltab	16	2	4	lifesteal		7	10	att%		60	120	skill	feral rage	1	2
+Tyrael's Might	uar	87	ac%		120	150	dmg-demon		50	100	res-all		20	30	str		20	30
+Soul Drainer	umg	82	ac%		90	120	manasteal		4	7	lifesteal		4	7
+Rune Master	72a	80	dmg%		220	270	sock		3	5
+Death Cleaver	7wa	78	dmg%		230	280	heal-kill		6	9
+Executioner's Justice	7gi	83	dmg%		240	290
+Stoneraven	amd	72	dmg%		230	280	res-all		30	50	ac		400	600	skilltab	2	1	3
+Leviathan	uld	73	ac%		170	200	ac		100	150	red-dmg%		15	25	str		40	50
+Wisp Projector	rin	84	abs-ltng%		10	20	mag%		10	20
+Gargoyle's Bite	7ts	78	dmg%		180	230	lifesteal		9	15
+Lacerator	7b8	76	dmg%		150	210
+Mang Song's Lesson	6ws	86	pierce-fire		7	15	pierce-ltng		7	15	pierce-cold		7	15
+Viperfork	7br	79	dmg%		190	240	att		200	250	res-pois		30	50
+Ethereal Edge	7ba	82	dmg%		150	180	abs-fire		10	12	dmg-demon		150	200	demon-heal		5	10	att		270	350
+Demonhorn's Edge	bad	69	ac%		120	160	lifesteal		3	6	thorns		55	77	skilltab	12	1	3	skilltab	13	1	3	skilltab	14	1	3
+The Reaper's Toll	7s8	83	dmg%		190	240	lifesteal		11	15
+Spirit Keeper	drd	75	ac%		170	190	abs-ltng		9	14	res-fire		30	40	abs-cold%		15	25	dru		1	2
+Hellrack	6hx	84	dmg%		180	230	att%		100	150
+Alma Negra	pac	85	ac%		180	210	pal		1	2	red-mag		5	9	att%		40	75	dmg%		40	75
+Darkforce Spawn	nef	72	ac%		140	180	skilltab	6	1	3	skilltab	7	1	3	skilltab	8	1	3
+Widowmaker	6sw	73	dmg%		150	200	oskill	Guided Arrow	3	5
+Blood Raven's Charge	amb	79	dmg%		180	230	att%		200	300	skilltab	0	2	4
+Ghostflame	7bl	70	dmg%		190	240	manasteal		10	15
+Shadow Killer	7cs	85	dmg%		170	220	mana-kill		10	15
+Gimmershred	7ta	78	dmg%		160	210
+Griffon's Eye	ci3	84	ac		100	200	extra-ltng		10	15	pierce-ltng		15	20
+Windhammer	7m7	76	dmg%		180	230
+Thunderstroke	amf	77	dmg%		150	200	skilltab	2	2	4
+Demon's Arch	7s7	76	dmg%		160	210	lifesteal		6	12
+Boneflame	nee	80	ac%		120	150	nec		2	3	res-all		20	30
+Steel Pillar	7p7	77	dmg%		210	260	ac%		50	80
+Nightwing's Veil	uhm	75	ac%		90	120	dex		10	20	abs-cold		5	9	extra-cold		8	15
+Crown of Ages	urn	86	res-all		20	30	ac		100	150	red-dmg%		10	15	sock		1	2
+Andariel's Visage	usk	85	ac%		100	150	str		25	30	lifesteal		8	10
+Dragonscale	pae	84	ac%		170	200	abs-fire%		10	20	str		15	25
+Steel Carapace	uul	74	ac%		190	220	red-dmg		9	14	res-cold		40	60	regen-mana		10	15
+Medusa's Gaze	uow	84	ac%		150	180	lifesteal		5	9	res-cold		40	80
+Ravenlore	dre	82	ac%		120	150	res-all		15	25	enr		20	30	pierce-fire		10	20
+Boneshade	7bw	84	skill	Teeth	4	5	skill	Bone Armor	4	5	skill	Bone Spear	2	3	skill	Bone Spirit	1	2	skill	Bone Wall	2	3
+Flamebellow	7gs	79	dmg%		170	240	abs-fire%		20	30	str		10	20	vit		5	10	oskill	Inferno	12	18
+Death's Fathom	obf	81	extra-cold		15	30	res-fire		25	40	res-ltng		25	40
+Wolfhowl	bac	85	ac%		120	150	skilltab	14	2	3	str		8	15	dex		8	15	vit		8	15	oskill	Wearwolf	3	6	oskill	Shape Shifting	3	6	oskill	Feral Rage	3	6
+Spirit Ward	uts	76	ac%		130	180	abs-cold		6	11	res-all		30	40	block		20	30
+Kira's Guardian	ci2	85	ac		50	120	res-all		50	70
+Ormus' Robes	uui	83	ac		10	20	extra-fire		10	15	extra-cold		10	15	extra-ltng		10	15	regen-mana		10	15
+Gheed's Fortune	cm3	70	mag%		20	40	gold%		80	160	cheap		10	15
+Stormlash	7fl	86	dmg%		240	300	abs-ltng		3	9
+Halaberd's Reign	bae	85	ac%		140	170	regen		15	23	skill	Battle Orders	1	2	skill	Battle Command	1	2
+Spike Thorn	upk	78	ac%		120	150	red-dmg%		15	20
+Dracul's Grasp	uvg	84	ac%		90	120	lifesteal		7	10	heal-kill		5	10	str		10	15
+Frostwind	7ls	78	dmg%		180	230	abs-cold%		7	15	oskill	Arctic Blast	7	14
+Templar's Might	uar	82	ac%		170	220	ac-miss		250	300	stam		40	50	str		10	15	vit		10	15	skilltab	10	1	2
+Eschuta's Temper	obc	80	sor		1	3	extra-fire		10	20	extra-ltng		10	20	enr		20	30
+Firelizard's Talons	7lw	75	dmg%		200	270	skilltab	20	1	3	res-fire		40	70	skill	Wake of Fire Sentry	1	2	skill	Inferno Sentry	1	2
+Sandstorm Trek	uvb	72	ac%		140	170	res-pois		40	70	str		10	15	vit		10	15
+Marrowwalk	umb	74	ac%		170	200	str		10	20	skill	Skeleton Mastery	1	2
+Heaven's Light	7sc	69	dmg%		250	300	demon-heal		15	20	sock		1	2	pal		2	3
+Arachnid Mesh	ulc	87	ac%		90	120
+Nosferatu's Coil	uvc	68	lifesteal		5	7
+Metalgrid	amu	85	ac		300	350	res-all		25	35	att		400	450
+Verdungo's Hearty Cord	umc	71	ac%		90	140	vit		30	40	stam		100	120	red-dmg%		10	15	regen		10	13
+Carrion Wind	rin	68	ac-miss		100	160	lifesteal		6	9
+Giant Skull	uh9	73	ac		250	320	str		25	35	sock		1	2
+Astreon's Iron Ward	7ws	68	dmg%		240	290	att%		150	200	red-dmg		4	7	dmg		40	85	skilltab	9	2	4
+Annihilus	cm1	110	all-stats		10	20	res-all		10	20	addxp		5	10
+Arioc's Needle	7sr	85	dmg%		180	230	allskills		2	4
+Cranebeak	7mp	71	dmg%		240	300	mag%		20	50
+Nord's Tenderizer	7cl	76	dmg%		270	330	freeze		2	4	att%		150	180	abs-cold%		5	15
+Earth Shifter	7gm	77	dmg%		250	300
+Wraith Flight	7gl	84	dmg%		150	190	lifesteal		9	13
+Bonehew	7o7	72	dmg%		270	320
+Ondal's Wisdom	6cs	74	enr		40	50	allskills		2	4	ac		450	550	red-mag		5	8
+The Redeemer	7sc	80	dmg%		250	300	dmg-demon		200	250	skill	Redemption	2	4	skill	Holy Bolt	2	4	dmg		60	120
+Head Hunter's Glory	ush	83	ac		320	420	ac-miss		300	350	res-pois		30	40	sock		1	3	res-fire		20	30	heal-kill		5	7
+Steelrend	uhg	78	ac		170	210	str		15	20	dmg%		30	60
+Rainbow Facet (ltng/death)	jew	85	pierce-ltng		3	5	extra-ltng		3	5
+Rainbow Facet (cold/death)	jew	85	pierce-cold		3	5	extra-cold		3	5
+Rainbow Facet (fire/death)	jew	85	pierce-fire		3	5	extra-fire		3	5
+Rainbow Facet (pois/death)	jew	85	pierce-pois		3	5	extra-pois		3	5
+Rainbow Facet (ltng/level)	jew	85	pierce-ltng		3	5	extra-ltng		3	5
+Rainbow Facet (cold/level)	jew	85	pierce-cold		3	5	extra-cold		3	5
+Rainbow Facet (fire/level)	jew	85	pierce-fire		3	5	extra-fire		3	5
+Rainbow Facet (pois/level)	jew	85	pierce-pois		3	5	extra-pois		3	5
+Hellfire Torch	cm2	110	all-stats		10	20	res-all		10	20`
+
+export const uniqueItems:Map<string,UniqueItem> = new Map()
+
+uniqueItemsTsv.split(/\r?\n/).forEach(line => { let uniqueItem = new UniqueItem(line); uniqueItems.set(uniqueItem.name, uniqueItem) });
+

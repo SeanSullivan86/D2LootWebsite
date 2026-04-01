@@ -95,9 +95,6 @@ watch(
 
 <template>
 
-    <div class="text-description">
-        Weapon scores...
-    </div>
     <template v-if="chartOptions != null">
         <ag-charts :options="chartOptions" style="height: 500px;"> </ag-charts>
     </template>

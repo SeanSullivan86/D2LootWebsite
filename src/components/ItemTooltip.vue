@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
-import { itemTypes } from '../model/globals'
+import { itemTypes, uniqueItems } from '../model/globals'
 import { itemCache, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly } from '../app-state'
 
 const itemName = ref<string[]|null>(null)
@@ -11,7 +11,7 @@ const item = ref<D2Item|null>(null)
 const tooltipDiv = ref<HTMLDivElement|null>(null)
 const extraDescriptionForEthAndSockets = ref<string|null>(null)
 const damageDescription = ref<string|null>(null)
-const upgradeDescription = ref<string|null>(null)
+const bottomSectionHtml = ref<string|null>(null)
 
 const consumerId = ref<string|null>(null)
 
@@ -55,9 +55,29 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
     itemDescription.value = item.value.description.toUpperCase().split(',').reverse();
 
     damageDescription.value = null
-    upgradeDescription.value = null
+    bottomSectionHtml.value = null
 
     let itemType = itemTypes.get(item.value.itemTypeCode)!
+
+    if (item.value.quality == 'UNIQUE') {
+        const uniqueItem = uniqueItems.get(item.value.name)
+        if (uniqueItem) {
+            itemName.value.push(uniqueItem.getItemType().name.toUpperCase() + " [ L" + uniqueItem.qlvl + " ]");
+        }
+
+        if (uniqueItem && uniqueItem.properties.length > 0) {
+            let desc = "<span style='text-decoration: underline;'>Property Ranges</span>"
+            for (const [index,propRange] of uniqueItem.properties.entries()) {
+                desc += "<br />";
+                desc += propRange.name;
+                if (propRange.param) {
+                    desc += "(" + propRange.param + ")"
+                }
+                desc += " : " + propRange.min + " - " + propRange.max;
+            }
+            bottomSectionHtml.value = desc;
+        }
+    }
 
     if (consumerId.value!.startsWith("RARE_WEAPONS|") || consumerId.value!.startsWith("FOOLS_WEAPON|")) {
         let dam = "";
@@ -108,7 +128,7 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
 
                 ug += "<br />Sockets: [" + upgradedDamage.sockets.join(" , ") + "]";
             }
-            upgradeDescription.value = ug;
+            bottomSectionHtml.value = ug;
         }
         
         
@@ -180,8 +200,8 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
                 <div class="blue">{{ extraDescriptionForEthAndSockets }}</div>
             </template>
             <div style="width:90%;height:1px;margin:5px auto;background-color:white"></div>
-            <template v-if="upgradeDescription">
-                <div v-html="upgradeDescription"></div>
+            <template v-if="bottomSectionHtml">
+                <div v-html="bottomSectionHtml"></div>
             </template>
         </template>
     </div>

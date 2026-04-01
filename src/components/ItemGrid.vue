@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { snapshotData, arraySum } from '../app-state'
+import { uniqueItems } from '../model/globals';
 
 const props = defineProps<{
   snapshotId: string,
@@ -92,6 +93,17 @@ const explanation = computed(() => {
 })
 
 function rowHtml(rowName:string):string {
+  if (props.consumerId == "COUNTS_OF_SET_AND_UNIQUES_BY_NAME") {
+    if (rowName.includes(",")) { // Set item
+      const parts = rowName.split(",");
+      if (parts.length != 2) throw ("Unexpected rowName : " + rowName)
+      return "<span class='set-green'>" + parts[1] + " (" + parts[0] + ")</span>";
+    } else { // unique item
+      const uniqueItem = uniqueItems.get(rowName)
+      if (!uniqueItem) return rowName;
+      return "<span class='gold'>" + rowName + " (" + uniqueItem.getItemType().name + ") [ L" + uniqueItem.qlvl + " ]</span>";
+    }
+  }
   if (rowName.endsWith(" Rune")) {
     return "<span class='orange'>" + rowName + "</span>"
   }
