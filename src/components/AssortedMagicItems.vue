@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { snapshotData, createItemTooltip, moveItemTooltip, destroyItemTooltip } from '../app-state'
+import { magicItemCategoryFriendlyNames } from '../model/globals'
 
 
 const props = defineProps<{
@@ -10,10 +11,21 @@ const props = defineProps<{
 
 const rows = ref<any[]>([])
 
+const zodCount = ref<number|null>(null)
+
 watch(
   [() => props.snapshotId, () => props.dropContext],
   ([newSnapshotId, newDropContext], [oldSnapshotId, oldDropContext]) => {
     const consumerSnapshot = snapshotData.dropContexts[props.dropContext].consumersById["MAGIC_ITEMS"]
+
+    zodCount.value = null
+    const itemCounts = snapshotData.dropContexts[props.dropContext].consumersById["ITEM_COUNTS_BY_TYPE_AND_QUALITY"];
+    let zodIndex = itemCounts.rowValues.indexOf("Zod Rune")
+    let normalIndex = itemCounts.columnValues.indexOf("NORMAL");
+    if (zodIndex >= 0 && normalIndex >= 0) {
+        zodCount.value = itemCounts.counts[zodIndex][normalIndex]
+    }
+
 
     let n = consumerSnapshot.categories.length;
     let newRows = [];
@@ -37,20 +49,26 @@ watch(
 </script>
 
 <template>
-
+    <div class="text-description">This doesn't include any Magic Items with staffmods (bonuses to individual skills). Also, I just
+        used Paladin Combat Skills as as example of a specific skill GC, they all have the same rarity though.
+    </div>
     <template v-if="rows.length > 0">
         <table class="itemGrid">
             <thead>
                 <tr><th>Category</th>
                     <th>Count Found</th>
-                    <th>Count Found (Perfect Stats)</th>
+                    <th>Count Found<br />(Perfect Stats)</th>
                     <th>Example Item</th>
                     <th>Perfect Item</th>
                 </tr>
             </thead>
             <tbody>
+                <template v-if="zodCount != null">
+                    <tr><td><span class='orange'>Zod Rune (for comparison)</span></td><td>{{ zodCount }}</td><td></td><td></td><td></td><td></td></tr>
+                </template>
                 <template v-for="(row, rowIndex) in rows">
-                    <tr><td>{{ row.name }}</td>
+                    <template v-if="! row.name.includes('DEFLECTING_HIGH_DAMAGE')">
+                    <tr><td v-html="magicItemCategoryFriendlyNames[row.name]"></td>
                         <td>{{ row.count ? row.count.toLocaleString() : "" }}</td>
                         <td>{{ row.perfectCount ? row.perfectCount.toLocaleString() : "" }}</td>
                         <template v-if="row.itemId != null">
@@ -70,6 +88,7 @@ watch(
                             <td></td>
                         </template>
                     </tr>
+                    </template>
                 </template>
             </tbody>
         </table>

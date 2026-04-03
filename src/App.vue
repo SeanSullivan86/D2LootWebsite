@@ -177,7 +177,7 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <span class="text-description">Do you want to score/rank the items by their maximum damage per hit, average damage per hit, or approximate DPS (damage per second)?</span>
     <br />
     <input type="radio" id="RW_DPS" value="DPS" v-model="rwScoringOption" />
-    <label for="RW_DPS">Damage per second. Assumes 60 IAS from non-weapon sources.</label>
+    <label for="RW_DPS">Damage per second. Assumes 40 IAS from non-weapon sources.</label>
     <br />
     <input type="radio" id="RW_MAX_DMG" value="MAX_DMG" v-model="rwScoringOption" />
     <label for="RW_MAX_DMG">Max Damage</label>
@@ -189,7 +189,7 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
   <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" :consumer-id="rwConsumerName"  />
 </TogglingSectionHeader>
 
-<TogglingSectionHeader title="Rare Weapon Damage Charts">
+<TogglingSectionHeader title="Rare Weapon Damage Charts (2-handed)">
   <div class="rareWeaponFormSection"> 
     <span class="text-description">Choose a chart:</span>
     <br />
