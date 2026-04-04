@@ -31,6 +31,8 @@ const explanation = computed(() => {
     return "Sorceress Orbs grouped by item Quality. Points are given for generic Caster attributes, + to Fire Skills, Fire Ball, Meteor and Fire Mastery."
   } else if (props.consumerId == "LIGHTNING_SORC_ORBS") {
     return "Sorceress Orbs grouped by item Quality. Points are given for generic Caster attributes, + to Lightning Skills, Lightning, Chain Lightning, and Lightning Mastery."
+  } else if (props.consumerId.startsWith("FOOLS_WEAPON|")) {
+    return "The magic prefix \"Fool's\" is especially valuable to some characters because of the huge bonus to attack rating. This shows the highest damage Rare \"Fool's\" weapons, ranked by DPS. It also assumes any such weapon will get upgraded to Elite, socketed with Larzuk quest if not yet socketed, have a Zod rune added to it if necessary, and any remaining sockets filled with (+15% IAS, +40% ED) jewels. Yes, those runes and jewels are expensive, but these top-end weapons are significantly more rare, so it would make sense that someone finding one would upgrade it fully. I want to compare the items at their max potential, not how they originally dropped.";
   }
   return ""
 })
@@ -116,7 +118,7 @@ table.d2-item-table {
   border-collapse: collapse;
 }
 table.d2-item-table :deep(td) {
-  background-color: #222;
+  background-color: #1b1b1b;
   color: white;
   text-align: left;
   border: 1px solid #888;
@@ -124,7 +126,7 @@ table.d2-item-table :deep(td) {
 }
 
 table.d2-item-table th {
-  background-color: #222;
+  background-color: #1b1b1b;
   color: white;
   border: 1px solid #888;
   padding: 2px 5px;

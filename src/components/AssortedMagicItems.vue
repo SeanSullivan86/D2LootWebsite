@@ -64,7 +64,7 @@ watch(
             </thead>
             <tbody>
                 <template v-if="zodCount != null">
-                    <tr><td><span class='orange'>Zod Rune (for comparison)</span></td><td>{{ zodCount }}</td><td></td><td></td><td></td><td></td></tr>
+                    <tr><td><span class='orange'>Zod Rune (for comparison)</span></td><td>{{ zodCount }}</td><td></td><td></td><td></td></tr>
                 </template>
                 <template v-for="(row, rowIndex) in rows">
                     <template v-if="! row.name.includes('DEFLECTING_HIGH_DAMAGE')">
@@ -72,7 +72,10 @@ watch(
                         <td>{{ row.count ? row.count.toLocaleString() : "" }}</td>
                         <td>{{ row.perfectCount ? row.perfectCount.toLocaleString() : "" }}</td>
                         <template v-if="row.itemId != null">
-                            <td style="text-align:center;text-decoration: underline; color:blue;" @mouseenter="createItemTooltip(row.itemId, 'MAGIC_ITEMS', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                            <td style="text-align:center;text-decoration: underline; color:#0080fe;" 
+                              @click="createItemTooltip(row.itemId, 'MAGIC_ITEMS', $event)" 
+                              @mouseenter="createItemTooltip(row.itemId, 'MAGIC_ITEMS', $event)" 
+                              @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                                 See Item
                             </td>
                         </template>
@@ -80,7 +83,10 @@ watch(
                             <td></td>
                         </template>
                         <template v-if="row.perfectItemId != null">
-                            <td style="text-align:center;text-decoration: underline;color:blue;" @mouseenter="createItemTooltip(row.perfectItemId, 'MAGIC_ITEMS', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                            <td style="text-align:center;text-decoration: underline;color:#0080fe;" 
+                              @click="createItemTooltip(row.perfectItemId, 'MAGIC_ITEMS', $event)"
+                              @mouseenter="createItemTooltip(row.perfectItemId, 'MAGIC_ITEMS', $event)" 
+                              @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                                 See Item
                             </td>
                         </template>

@@ -2,13 +2,13 @@
 import { ref, watch } from 'vue'
 import { type D2Item } from '../model/D2Item'
 import { itemTypes, uniqueItems } from '../model/globals'
-import { itemCache, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly } from '../app-state'
+import { itemCache, itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip, isTouchOnly, destroyItemTooltipTouchscreen } from '../app-state'
 
 const itemName = ref<string[]|null>(null)
 const itemDescription = ref<string[]|null>(null)
 const nameCssClass = ref<string|null>(null)
 const item = ref<D2Item|null>(null)
-const tooltipDiv = ref<HTMLDivElement|null>(null)
+const tooltipDiv = ref<HTMLDivElement|HTMLDialogElement|null>(null)
 const extraDescriptionForEthAndSockets = ref<string|null>(null)
 const damageDescription = ref<string|null>(null)
 const bottomSectionHtml = ref<string|null>(null)
@@ -25,26 +25,42 @@ function parseEnhancedDamage(input: string): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
+function closeDialog(event:MouseEvent) {
+    console.log("close dialog");
+    console.log(event.currentTarget);
+    console.log(event.target);
+    console.log(event);
+    (tooltipDiv.value as HTMLDialogElement).close()
+    destroyItemTooltipTouchscreen();
+}
+
 watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId, oldX, oldY, oldConsumerId]) => {
 
+
     if (itemIdForTooltip.value == null) {
+        console.log("itemTooltip Watch with null itemId")
         itemName.value = null
         itemDescription.value = null
         if (tooltipDiv.value) {
-            tooltipDiv.value.classList.remove("visible")
+            if (isTouchOnly.value) {
+                (tooltipDiv.value as HTMLDialogElement).close()
+            } else {
+                tooltipDiv.value.classList.remove("visible")
+            }
+            
         }
-        if (isTouchOnly.value) {
-            tooltipDiv.value?.hidePopover();
-        }
+
         consumerId.value = null
         return;
     }
+    console.log("itemTooltip Watch with non-null itemId")
 
     if (isTouchOnly.value) {
-        tooltipDiv.value?.showPopover();
+        console.log("calling showModal");
+        (tooltipDiv.value as HTMLDialogElement).showModal();
+    } else {
+        tooltipDiv.value!.classList.add("visible")
     }
-
-    tooltipDiv.value!.classList.add("visible")
 
     item.value = itemCache.get(itemIdForTooltip.value)!
 
@@ -184,7 +200,11 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
 
 <template>
   
-    <div id="itemTooltip" ref="tooltipDiv" :popover="isTouchOnly ? 'auto' : null">
+    <component id="itemTooltip" 
+               ref="tooltipDiv" 
+               :is="isTouchOnly ? 'dialog' : 'div'"
+               v-bind:closedby="isTouchOnly ? 'none' : null"
+               :class="{ nonTouch: (!isTouchOnly) }">
         <template v-if="itemName">
             <template v-for="line in itemName">
                 <div :class="nameCssClass" style="font-weight:bold">{{ line }}</div>
@@ -199,25 +219,34 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
             <template v-if="extraDescriptionForEthAndSockets">
                 <div class="blue">{{ extraDescriptionForEthAndSockets }}</div>
             </template>
-            <div style="width:90%;height:1px;margin:5px auto;background-color:white"></div>
+            
             <template v-if="bottomSectionHtml">
+                <div style="width:90%;height:1px;margin:5px auto;background-color:white"></div>
                 <div v-html="bottomSectionHtml"></div>
             </template>
         </template>
-    </div>
+        <template v-if="isTouchOnly">
+            <div class="closeButton" @click="closeDialog($event)" >Close</div>
+        </template>
+    </component>
 
 </template>
 
 <style scoped>
 
-#itemTooltip {
-    position: fixed;
-    pointer-events: none;
-    z-index: 1000;
-    display: none;
+.closeButton {
+    margin-top:8px;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: darkred;
+}
 
+#itemTooltip {
     min-width: 220px;
-    background-color: #222;
+    background-color: black;
     color: #f5f0e8;
     padding: 10px;
 
@@ -225,7 +254,19 @@ watch([itemIdForTooltip, tooltipX, tooltipY, consumerIdForTooltip], ([oldItemId,
     text-align: center;
 }
 
-#itemTooltip.visible {
+#itemTooltip::backdrop {
+  /* background-color: rgba(255, 0, 0, 0.5); */
+  backdrop-filter: blur(3px);            /* Blurs the content behind */
+}
+
+#itemTooltip.nonTouch {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    display: none;
+}
+
+#itemTooltip.nonTouch.visible {
     display: block;
 }
 

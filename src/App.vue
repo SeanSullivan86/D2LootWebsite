@@ -52,7 +52,7 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     I modded Diablo 2 (LOD 1.14d) so that when a monster gets killed, it keeps generating items in an
     infinite loop. This is running in parallel for a few different monster types to get a variety
     of loot. This website shows the best items that have been generated. Here's how many items 
-    it's made so far:
+    it's made so far...
   </div>
 
 
@@ -60,7 +60,7 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 
   <div class="text-description" style="margin:5px 8px">
     By default, the rest of this webpage will show the items dropped by all the monsters, mixed together.
-    If you want to just see the items dropped by 1 of the monsters, choose here:
+    If you want to just see the items dropped by 1 of the monsters, choose here
   </div>
   
 
@@ -78,24 +78,8 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <label for="DC_ALL">All 3 Combined</label>
   </div>
 
-  <TogglingSectionHeader title="Cold Sorc Orbs">
-    <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COLD_SORC_ORBS"  />
-  </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="Fire Sorc Orbs">
-    <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="FIRE_SORC_ORBS"  />
-  </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="Lightning Sorc Orbs">
-    <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="LIGHTNING_SORC_ORBS"  />
-  </TogglingSectionHeader>
-
   <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Amulets">
     <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_AMULETS"  />
-  </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Rings">
-    <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_RINGS"  />
   </TogglingSectionHeader>
   
   <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Circlets">
@@ -106,9 +90,10 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_BOOTS"  />
   </TogglingSectionHeader>  
 
-  <TogglingSectionHeader title="Tri-Resistance Boots">
-    <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="TRI_RES_BOOTS"  />
-  </TogglingSectionHeader>    
+  <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Rings">
+    <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_RINGS"  />
+  </TogglingSectionHeader>
+  
 
   <TogglingSectionHeader title="Item Counts by Type and Quality">
     <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="ITEM_COUNTS_BY_TYPE_AND_QUALITY"  />
@@ -118,26 +103,13 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COUNTS_OF_SET_AND_UNIQUES_BY_NAME"  />
   </TogglingSectionHeader>
   
-  <TogglingSectionHeader title="<span class='gold'>Unique</span> Items (perfect-roll Grail)">
+  <TogglingSectionHeader title="<span class='gold'>Unique</span> Items (perfect roll hunt)">
     <PerfectUniques :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
   </TogglingSectionHeader>
   
   <TogglingSectionHeader title="Assorted good <span class='blue'>Magic</span> Items">
     <AssortedMagicItems :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
   </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="Game Bug Exposed : Cruel/Godly twice as common as expected">
-    <AffixFrequencyBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
-  </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="Game Bug Exposed : Gold Find doesn't always work on Act Bosses">
-    <GoldBug :snapshotId="snapshotId!"/>
-  </TogglingSectionHeader>
-
-  <TogglingSectionHeader title="Game Bug Exposed : Illegal +Skills mods on Barbarian helms">
-    <IllegalStaffmodsBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
-  </TogglingSectionHeader>  
-
   
 <TogglingSectionHeader title="High Damage <span class='yellow'>Rare</span> Weapons">
   <div class="rareWeaponFormSection"> 
@@ -191,7 +163,10 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 
 <TogglingSectionHeader title="Rare Weapon Damage Charts (2-handed)">
   <div class="rareWeaponFormSection"> 
-    <span class="text-description">Choose a chart:</span>
+    <span class="text-description">This is mostly showing that if you want to have a high-damage rare weapon it has to be Ethereal, and if you want
+      the very, very highest damage weapons they'll need to have 2 sockets and/or be self-repairing as well (so you don't need to use a zod rune
+      on one of the sockets). <br /><br />
+      Choose a chart:</span>
     <br />
     <input type="radio" id="RWDC_ELITE_SOCKETS_ZOD_4015" value="DPS|ELITE_SOCKETS_ZOD_4015" v-model="rwdcDamageOption" />
     <label for="RWDC_ELITE_SOCKETS_ZOD_4015">Upgrade to Elite. Add socket if possible. Add Zod rune if needed to make ethereal item long-lasting. Fill remaining slots with 40%ED/15ias jewels. Graphs the frequency of different DPS amounts.</label>
@@ -221,6 +196,30 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="FOOLS_WEAPON|1_HANDED"  />
 </TogglingSectionHeader>
 
+<TogglingSectionHeader title="Cold Sorc Orbs">
+  <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COLD_SORC_ORBS"  />
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Fire Sorc Orbs">
+  <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="FIRE_SORC_ORBS"  />
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Lightning Sorc Orbs">
+  <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="LIGHTNING_SORC_ORBS"  />
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Game Bug Exposed : Cruel/Godly twice as common as expected">
+  <AffixFrequencyBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Game Bug Exposed : Gold Find doesn't always work on Act Bosses">
+  <GoldBug :snapshotId="snapshotId!"/>
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Game Bug Exposed : Illegal +Skills mods on Barbarian helms">
+  <IllegalStaffmodsBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
+</TogglingSectionHeader> 
+
 <TogglingSectionHeader title="<span class='yellow'>Rare</span> Melee Jewels">
     <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_MELEE_JEWELS"  />
 </TogglingSectionHeader>
@@ -228,6 +227,14 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 <TogglingSectionHeader title="Wind Druid (Tornado) Pelts">
     <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="WIND_DRUID_PELTS"  />
 </TogglingSectionHeader>
+
+<!--
+<TogglingSectionHeader title="Tri-Resistance Boots">
+  <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="TRI_RES_BOOTS"  />
+</TogglingSectionHeader>  
+
+
+-->
 
 <TogglingSectionHeader title="<span style='color:white'>FAQ<span>">
     <div class="faq-question">How much MF did the character have when it killed the monster?</div>
@@ -249,12 +256,44 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
       <br /><br />
       Deleted each item after it gets created so memory doesn't fill up.
       <br /><br />
+      Disabled the check that prevents multiple instances of the game from running on the same PC.
+      <br /><br />
+      There was a slow memory leak (less than 1 byte per item on average). I replaced the game's pooled memory allocator with a simple one that
+      does nothing when free(...) is called on a specific pointer, but has a freeAll() operation, so after each 
+      time 'killing' the monster, I can reliably free all the memory that had been allocated by the game's 
+      item generation process. Maybe the game had some additional memory cleanup funtionality that wasn't getting
+      called because I took over the game's main game loop thread.
+      <br /><br />
       Each item in a game is given a sequential id number when it is loaded into the game. Since there's a 32bit
       integer keeping track of the next id number to assign, it eventually overflows after 4+ billion items and wraps
       back to 0, and then the item ids being assigned collide with other item ids in the game (like the items my
       character is wearing, for example) and the game crashes. I just made it so when this counter got close to
       overflowing, I reset it back to 1 billion. I don't need the items to have actual unique ids, since I'm
       deleting them right after they get created anyway.
+
+    </div>
+
+    <div class="faq-question">Can I see the code?</div>
+    <div class="faq-answer">
+      There's a few different applications working together:<br /><br />
+
+      1. The "mod" to Diablo 2. This code gets injected into the running Diablo 2 game process. When injected, it modifies 
+      the part of the game code that handles item drops, to make it redirect to my code, which then calls the item drop 
+      code repeatedly. The item data is sent over a local TCP port to the "aggregator" app.
+      <a target="_blank" href="https://github.com/SeanSullivan86/D2InjectedLootDropLooper">Code</a>
+      <br /><br />
+      2. A small app that's just responsible for injecting the previous app into the Diablo 2 game process, using Windows
+      Process/Memory manipulation APIs. <a target="_blank" href="https://github.com/SeanSullivan86/D2DLLInjector">Code</a>
+      <br /><br />
+      3. The "aggregator" app. It listens to the item data being streamed over different TCP ports from each of the modded
+      game instances. Currently I'm running 5 game instances (2 killing Baal, 2 killing L85 Unique mob, 1 killing L85 normal mob).
+      This looks at all the items and records all the statistics about the items (item counts, top items meeting certain criteria,
+      all the categories you see on this page). Every hour it saves a snapshot of the statistics to cloud storage, where it can 
+      then be retrieved by the web app. <a target="_blank" href="https://github.com/SeanSullivan86/D2LootListener">Code</a>
+      <br /><br />
+      4. This website. It retrieves the data file from cloud storage and shows all these views of the items.
+      <a target="_blank" href="https://github.com/SeanSullivan86/D2LootWebsite">Code</a>
+
     </div>
 
 </TogglingSectionHeader>

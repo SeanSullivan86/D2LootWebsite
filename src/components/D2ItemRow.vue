@@ -38,7 +38,8 @@ const nameCssClass = computed(() => {
 </script>
 
 <template>
-  <tr @mouseenter="createItemTooltip(data.item.id, props.consumerId, $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+  <tr @mouseenter="createItemTooltip(data.item.id, props.consumerId, $event)"
+      @click="createItemTooltip(data.item.id, props.consumerId, $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
     <template v-if="!isNarrowWindow">
       <td class="item-score-cell">{{ data.score }}</td>
       <td :class='[nameCssClass, "item-name-cell"]'>{{ fixedName }}</td>
@@ -83,10 +84,6 @@ table.d2-item-table td.blue {
 
 table.d2-item-table tr {
   cursor:pointer;
-}
-
-.item-description-element {
-    
 }
 
 .item-description-element:not(:last-of-type) {

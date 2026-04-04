@@ -28,6 +28,9 @@ export const LATEST_SNAPSHOT_ID = ref<string|null>(null)
 
 
 export function createItemTooltip(itemId:number, consumerId:string, event:any) {
+  console.log("createItemTooltip")
+  console.log(event)
+  if (isTouchOnly.value && event.type != 'click') return;
   if (itemId == null || itemId == undefined) return;
   itemIdForTooltip.value = itemId
   consumerIdForTooltip.value = consumerId;
@@ -36,10 +39,16 @@ export function createItemTooltip(itemId:number, consumerId:string, event:any) {
 }
 
 export function destroyItemTooltip() {
+  if (isTouchOnly.value) return;
+  itemIdForTooltip.value = null
+}
+
+export function destroyItemTooltipTouchscreen() {
   itemIdForTooltip.value = null
 }
 
 export function moveItemTooltip(event:any) {
+  if (isTouchOnly.value) return;
   tooltipX.value = event.clientX
   tooltipY.value = event.clientY
 }

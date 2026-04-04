@@ -53,19 +53,32 @@ function formatPercentage(num:number) {
                         <td>{{ row.possibleRolls.toLocaleString() }}</td>
                         <td>{{ row.ethCount.toLocaleString() }}</td>
                         <td>{{ row.nonEthCount.toLocaleString() }}</td>
-                        <td style="border-right:0px" @mouseenter="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                        <td style="border-right:0px" 
+                          @click="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseenter="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                            <template v-if="row.ethCount > 0">{{ formatPercentage(row.maxEthPerfection) }} </template>
                         </td>
-                        <td style="border-left:0px;" @mouseenter="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                        <td style="border-left:0px;" 
+                          @click="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseenter="createItemTooltip(row.bestEthItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                           <template v-if="row.ethCount > 0">
-                            <span style="color:blue;font-size:0.8rem;text-decoration:underline;cursor:pointer;">See Item</span>
+                            <span style="color:#0080fe;font-size:0.8rem;text-decoration:underline;cursor:pointer;">See Item</span>
                           </template>
                         </td>
-                        <td style="border-right:0px" @mouseenter="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                        <td style="border-right:0px" 
+                          @click="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseenter="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                           <template v-if="row.nonEthCount > 0">{{ formatPercentage(row.maxPerfection) }} </template>
-                        </td><td style="border-left:0px;" @mouseenter="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)" @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
+                        </td>
+                        <td style="border-left:0px;" 
+                          @click="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)"
+                          @mouseenter="createItemTooltip(row.bestItemId, 'PERFECT_UNIQUES_TRACKER', $event)" 
+                          @mouseleave="destroyItemTooltip" @mousemove="moveItemTooltip">
                           <template v-if="row.nonEthCount > 0">
-                            <span style="color:blue;font-size:0.8rem;text-decoration:underline;cursor:pointer;">See Item</span>
+                            <span style="color:#0080fe;font-size:0.8rem;text-decoration:underline;cursor:pointer;">See Item</span>
                           </template>
                         </td>
                         <td>{{ row.perfectEthCount.toLocaleString() }}</td>

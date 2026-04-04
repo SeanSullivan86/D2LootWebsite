@@ -12,10 +12,11 @@ const props = defineProps<{
 
 const chartOptions = ref<AgChartOptions|null>(null)
 
+const yAxisType = ref<"log"|"number">("log")
 
 watch(
-  [() => props.snapshotId, () => props.dropContext, () => props.consumerId],
-  ([newSnapshotId, newDropContext, newConsumerId], [oldSnapshotId, oldDropContext, oldConsumerId]) => {
+  [() => props.snapshotId, () => props.dropContext, () => props.consumerId, () => yAxisType.value], 
+  ([newSnapshotId, newDropContext, newConsumerId, newYAxistype], [oldSnapshotId, oldDropContext, oldConsumerId, oldYAxisType]) => {
 
     let scoreType = "UNKNOWN";
     if (newConsumerId.includes("|DPS|")) scoreType = "DPS";
@@ -74,7 +75,7 @@ watch(
             }
         },
         y: {
-            type: 'log',
+            type: newYAxistype,
             base: 10,
             title: { text: 'Item Count', spacing: 2 },
             label: {
@@ -94,9 +95,14 @@ watch(
 </script>
 
 <template>
+    Vertical Axis : <input type="radio" id="yAxisLog" value="log" v-model="yAxisType">
+    <label for="yAxisLog">Log</label>&nbsp;&nbsp;&nbsp;
+
+    <input type="radio" id="yAxisLinear" value="number" v-model="yAxisType">
+    <label for="yAxisLinear">Linear</label>
 
     <template v-if="chartOptions != null">
-        <ag-charts :options="chartOptions" style="height: 500px;"> </ag-charts>
+        <ag-charts :options="chartOptions" style="height: 500px; margin-top:8px;"> </ag-charts>
     </template>
     
 

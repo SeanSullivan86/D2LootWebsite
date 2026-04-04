@@ -78,7 +78,7 @@ table.d2-item-table {
   border-collapse: collapse;
 }
 table.d2-item-table :deep(td) {
-  background-color: #222;
+  background-color: #1b1b1b;
   color: white;
   text-align: left;
   border: 1px solid #888;
@@ -86,7 +86,7 @@ table.d2-item-table :deep(td) {
 }
 
 table.d2-item-table th {
-  background-color: #222;
+  background-color: #1b1b1b;
   color: white;
   border: 1px solid #888;
   padding: 2px 5px;
