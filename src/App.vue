@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { isNarrowWindow, itemCache, setSnapshotData } from './app-state'
+import TogglingSectionHeader from './components/TogglingSectionHeader.vue'
 
 const isLoaded = ref<number>(0)
 const selectedDropContext = ref<string>("ALL")
@@ -92,15 +93,6 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 
   <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Rings">
     <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_RINGS"  />
-  </TogglingSectionHeader>
-  
-
-  <TogglingSectionHeader title="Item Counts by Type and Quality">
-    <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="ITEM_COUNTS_BY_TYPE_AND_QUALITY"  />
-  </TogglingSectionHeader>
-  
-  <TogglingSectionHeader title="Counts of <span class='set-green'>Sets</span> and <span class='gold'>Uniques</span> by name">
-    <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COUNTS_OF_SET_AND_UNIQUES_BY_NAME"  />
   </TogglingSectionHeader>
   
   <TogglingSectionHeader title="<span class='gold'>Unique</span> Items (perfect roll hunt)">
@@ -196,6 +188,14 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="FOOLS_WEAPON|1_HANDED"  />
 </TogglingSectionHeader>
 
+<TogglingSectionHeader title="Item Counts by Type and Quality">
+  <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="ITEM_COUNTS_BY_TYPE_AND_QUALITY"  />
+</TogglingSectionHeader>
+
+<TogglingSectionHeader title="Counts of <span class='set-green'>Sets</span> and <span class='gold'>Uniques</span> by name">
+  <ItemGrid :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COUNTS_OF_SET_AND_UNIQUES_BY_NAME"  />
+</TogglingSectionHeader>
+
 <TogglingSectionHeader title="Cold Sorc Orbs">
   <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="COLD_SORC_ORBS"  />
 </TogglingSectionHeader>
@@ -235,6 +235,11 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 
 
 -->
+
+<TogglingSectionHeader title="<span style='color:white'>Discuss on Discord</span>">
+  Have suggestions? Come chat on <a target="_blank" style="color:lightskyblue" href="https://discord.gg/UuFRsY79Qb">Discord</a> . Yeah it's empty,
+  don't be shy!
+</TogglingSectionHeader>
 
 <TogglingSectionHeader title="<span style='color:white'>FAQ<span>">
     <div class="faq-question">How much MF did the character have when it killed the monster?</div>
@@ -280,25 +285,35 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
       1. The "mod" to Diablo 2. This code gets injected into the running Diablo 2 game process. When injected, it modifies 
       the part of the game code that handles item drops, to make it redirect to my code, which then calls the item drop 
       code repeatedly. The item data is sent over a local TCP port to the "aggregator" app.
-      <a target="_blank" href="https://github.com/SeanSullivan86/D2InjectedLootDropLooper">Code</a>
+      <a target="_blank"  style="color:lightskyblue"  href="https://github.com/SeanSullivan86/D2InjectedLootDropLooper">Code</a>
       <br /><br />
       2. A small app that's just responsible for injecting the previous app into the Diablo 2 game process, using Windows
-      Process/Memory manipulation APIs. <a target="_blank" href="https://github.com/SeanSullivan86/D2DLLInjector">Code</a>
+      Process/Memory manipulation APIs. <a target="_blank" style="color:lightskyblue"  href="https://github.com/SeanSullivan86/D2DLLInjector">Code</a>
       <br /><br />
       3. The "aggregator" app. It listens to the item data being streamed over different TCP ports from each of the modded
       game instances. Currently I'm running 5 game instances (2 killing Baal, 2 killing L85 Unique mob, 1 killing L85 normal mob).
       This looks at all the items and records all the statistics about the items (item counts, top items meeting certain criteria,
       all the categories you see on this page). Every hour it saves a snapshot of the statistics to cloud storage, where it can 
-      then be retrieved by the web app. <a target="_blank" href="https://github.com/SeanSullivan86/D2LootListener">Code</a>
+      then be retrieved by the web app. <a target="_blank"  style="color:lightskyblue"  href="https://github.com/SeanSullivan86/D2LootListener">Code</a>
       <br /><br />
       4. This website. It retrieves the data file from cloud storage and shows all these views of the items.
-      <a target="_blank" href="https://github.com/SeanSullivan86/D2LootWebsite">Code</a>
+      <a target="_blank"  style="color:lightskyblue"  href="https://github.com/SeanSullivan86/D2LootWebsite">Code</a>
 
     </div>
 
 </TogglingSectionHeader>
 
-
+<TogglingSectionHeader title="<span style='color:white'>Thanks</span>">
+  <span class="text-description">
+  I've worked on this on-and-off (and by that, I mean spend some evenings on it and then take a year off) for ~8 years, so I'm definitely forgetting
+  some of the people I got help from, sorry about that.
+  <br /><br />
+  Thanks to the Phrozen Keep community (Discord, website forum etc). They're a Diablo 2 modding community. I got help from many people over the years,
+  including SwineFlu, Necrolis and Lectem.
+  <br /><br />
+  Thanks to the <a target="_blank"  style="color:lightskyblue" href="https://github.com/ThePhrozenKeep/D2MOO">D2MOO</a> project (also associated with the Phrozen Keep) to decompile/re-implement much of the Diablo 2 source code. 
+  </span>
+</TogglingSectionHeader>
 
 
 </template> <!-- end v-if="isLoaded" -->
