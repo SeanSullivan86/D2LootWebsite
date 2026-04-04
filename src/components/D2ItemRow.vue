@@ -108,6 +108,7 @@ table.d2-item-table tr {
     padding: 0px 4px;
     border-radius: 3px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 

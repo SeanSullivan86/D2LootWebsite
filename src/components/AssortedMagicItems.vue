@@ -31,6 +31,16 @@ watch(
     let newRows = [];
     
     for(let i = 0; i < n; i++) {
+        const categoryName = consumerSnapshot.categories[i];
+        if (categoryName.includes("JAV_SKILLS")) {
+            if (categoryName != "THREE_JAV_SKILLS_20_IAS_GLOVES" && categoryName != "SIX_JAV_SKILLS_40_IAS" && categoryName != "TWO_ZON_3_JAV_SKILLS_40_IAS") {
+                continue; // skip some of the more boring JAV_SKILLS entries
+            }
+        }
+        if (categoryName.includes("DEFLECTING_HIGH_DAMAGE")) {
+            continue; // skip these (they're bugged)
+        }
+
         newRows.push({
             name : consumerSnapshot.categories[i],
             count : consumerSnapshot.counts[i][0],
@@ -64,10 +74,10 @@ watch(
             </thead>
             <tbody>
                 <template v-if="zodCount != null">
-                    <tr><td><span class='orange'>Zod Rune (for comparison)</span></td><td>{{ zodCount }}</td><td></td><td></td><td></td></tr>
+                    <tr><td><span class='orange'>Zod Rune (for comparison)</span></td><td>{{ zodCount.toLocaleString() }}</td><td></td><td></td><td></td></tr>
                 </template>
                 <template v-for="(row, rowIndex) in rows">
-                    <template v-if="! row.name.includes('DEFLECTING_HIGH_DAMAGE')">
+                    
                     <tr><td v-html="magicItemCategoryFriendlyNames[row.name]"></td>
                         <td>{{ row.count ? row.count.toLocaleString() : "" }}</td>
                         <td>{{ row.perfectCount ? row.perfectCount.toLocaleString() : "" }}</td>
@@ -94,7 +104,7 @@ watch(
                             <td></td>
                         </template>
                     </tr>
-                    </template>
+                    
                 </template>
             </tbody>
         </table>

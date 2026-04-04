@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { arraySum, snapshotData } from '../app-state'
+import { arraySum, snapshotData, isNarrowWindow } from '../app-state'
 
 
 const props = defineProps<{
@@ -58,45 +58,44 @@ watch(
                 <tr><th>Item Prefix</th>
                     <th>Frequency (according to online sources and the game's config files)</th>
                     <th>Frequency (after accounting for the bug)</th>
-                    <th>Item Counts Actually Found</th>
-                    <th>Item counts scaled down to sum to 28</th>
+                    <th>Item Counts and Ratios Actually Found</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="white-space:nowrap">Massive (+ 51-65% dmg)</td>
+                    <td style="white-space:nowrap">Massive<template v-if="isNarrowWindow"><br /></template> (+ 51-65% dmg)</td>
                     <td>7</td>
                     <td>7</td>
-                    <td> {{ itemCounts[0].toLocaleString() }} </td>
-                    <td> {{ (itemCounts[0] / itemSum * 28).toFixed(3) }}</td>
+                    <td> {{ itemCounts[0].toLocaleString() }} 
+                    <br /><span class="text-description">[{{ (itemCounts[0] / itemSum * 28).toFixed(3) }} / 28]</span></td>
                 </tr>
                 <tr>
-                    <td style="white-space:nowrap">Savage (+ 66-80% dmg)</td>
+                    <td style="white-space:nowrap">Savage<template v-if="isNarrowWindow"><br /></template> (+ 66-80% dmg)</td>
                     <td>7</td>
                     <td>7</td>
-                    <td> {{ itemCounts[1].toLocaleString() }} </td>
-                    <td> {{ (itemCounts[1] / itemSum * 28).toFixed(3) }}</td>
+                    <td> {{ itemCounts[1].toLocaleString() }} 
+                    <br /><span class="text-description">[{{ (itemCounts[1] / itemSum * 28).toFixed(3) }} / 28]</span></td>
                 </tr>
                 <tr>
-                    <td style="white-space:nowrap">Merciless (+ 81-100% dmg)</td>
+                    <td style="white-space:nowrap">Merciless<template v-if="isNarrowWindow"><br /></template> (+ 81-100% dmg)</td>
                     <td>6</td>
                     <td>6</td>
-                    <td> {{ itemCounts[2].toLocaleString() }} </td>
-                    <td> {{ (itemCounts[2] / itemSum * 28).toFixed(3) }}</td>
+                    <td> {{ itemCounts[2].toLocaleString() }} 
+                    <br /><span class="text-description">[{{ (itemCounts[2] / itemSum * 28).toFixed(3) }} / 28]</span></td>
                 </tr>
                 <tr>
-                    <td style="white-space:nowrap">Ferocious (+ 101-200% dmg)</td>
+                    <td style="white-space:nowrap">Ferocious<template v-if="isNarrowWindow"><br /></template> (+ 101-200% dmg)</td>
                     <td>6</td>
                     <td>6</td>
-                    <td> {{ itemCounts[3].toLocaleString() }} </td>
-                    <td> {{ (itemCounts[3] / itemSum * 28).toFixed(3) }}</td>
+                    <td> {{ itemCounts[3].toLocaleString() }} 
+                    <br /><span class="text-description">[{{ (itemCounts[3] / itemSum * 28).toFixed(3) }} / 28]</span></td>
                 </tr>
                 <tr>
-                    <td style="white-space:nowrap">Cruel (+ 201-300% dmg)</td>
+                    <td style="white-space:nowrap">Cruel<template v-if="isNarrowWindow"><br /></template> (+ 201-300% dmg)</td>
                     <td style="color:red;font-weight:bold">1</td>
                     <td style="color:green;font-weight:bold">2</td>
-                    <td> {{ itemCounts[4].toLocaleString() }} </td>
-                    <td> {{ (itemCounts[4] / itemSum * 28).toFixed(3) }}</td>
+                    <td> {{ itemCounts[4].toLocaleString() }} 
+                    <br /><span class="text-description">[{{ (itemCounts[4] / itemSum * 28).toFixed(3) }} / 28]</span></td>
                 </tr>
             </tbody>
         </table>
@@ -113,7 +112,7 @@ table.itemGrid {
 table.itemGrid td {
   background-color: #222;
   color: white;
-  text-align: right;
+  text-align: center;
   border: 1px solid #888;
   padding: 2px;
 }

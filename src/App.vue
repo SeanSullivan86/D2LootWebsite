@@ -78,6 +78,9 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
     <input type="radio" id="DC_ALL" value="ALL" v-model="selectedDropContext">
     <label for="DC_ALL">All 3 Combined</label>
   </div>
+  <br />
+  Note : You can mouse-over (or touch on mobile) any of the item descriptions in the tables below to see it formatted more like an in-game item.
+  In some cases (weapons), the item pop-up has more info (damage stats).
 
   <TogglingSectionHeader title="<span class='yellow'>Rare</span> Caster Amulets">
     <TopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="RARE_CASTER_AMULETS"  />
@@ -102,6 +105,10 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
   <TogglingSectionHeader title="Assorted good <span class='blue'>Magic</span> Items">
     <AssortedMagicItems :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
   </TogglingSectionHeader>
+
+<TogglingSectionHeader title="Game Bug Exposed : Cruel/Godly twice as common as expected">
+  <AffixFrequencyBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
+</TogglingSectionHeader>  
   
 <TogglingSectionHeader title="High Damage <span class='yellow'>Rare</span> Weapons">
   <div class="rareWeaponFormSection"> 
@@ -206,10 +213,6 @@ const rwdcConsumerName = computed(() => "RARE_WEAPON_SCORES|" + rwdcDamageOption
 
 <TogglingSectionHeader title="Lightning Sorc Orbs">
   <CategorizedTopN :drop-context="selectedDropContext!" :snapshot-id="snapshotId!" consumer-id="LIGHTNING_SORC_ORBS"  />
-</TogglingSectionHeader>
-
-<TogglingSectionHeader title="Game Bug Exposed : Cruel/Godly twice as common as expected">
-  <AffixFrequencyBug :drop-context="selectedDropContext!" :snapshotId="snapshotId!"/>
 </TogglingSectionHeader>
 
 <TogglingSectionHeader title="Game Bug Exposed : Gold Find doesn't always work on Act Bosses">
