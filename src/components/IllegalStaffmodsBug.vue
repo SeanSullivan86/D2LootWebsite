@@ -41,7 +41,7 @@ watch(
         selects another random skill. If 6 attempts all fail that way, the game gives up and lets 
         the chosen skill be added to the them. This bug was apparently fixed in D2R.
         <br /><br />
-        The table below shows how frequent all of the individual skill bonuses are. Note how
+        The table below shows how frequent all of the individual skill bonuses are (on any item, not just Barb helms). Note how
         comparitively rare the Barbarian combat skills are, due to them being "illegal" still
         possible due to this coding bug / quirk. The same bug also applies to the Holy Shield skill
         showing up as a bonus on Scepters. Note: some skills that can show up as bonuses on items 
